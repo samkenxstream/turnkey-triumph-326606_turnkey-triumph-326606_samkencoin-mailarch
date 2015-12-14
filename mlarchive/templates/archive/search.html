@@ -41,14 +41,14 @@
                 <h4>FILTER BY TIME</h4>
                 <ul class="filter-options" tabindex="-1">
                   <li class="filter-item"><a class="{% selected request 'qdr' '' %}" href="{% query_string '' 'qdr' %}">Anytime</a></li>
-                  <li class="filter-item"><a class="{% selected request 'qdr' 'd' %}" href="{% query_string 'qdr=d' 'index' %}">Past day</a></li>
-                  <li class="filter-item"><a class="{% selected request 'qdr' 'w' %}" href="{% query_string 'qdr=w' 'index' %}">Past week</a></li>
-                  <li class="filter-item"><a class="{% selected request 'qdr' 'm' %}" href="{% query_string 'qdr=m' 'index' %}">Past month</a></li>
-                  <li class="filter-item"><a class="{% selected request 'qdr' 'y' %}" href="{% query_string 'qdr=y' 'index' %}">Past year</a></li>
+                  <li class="filter-item"><a class="{% selected request 'qdr' 'd' %}" href="{% query_string 'qdr=d' 'index, page' %}">Past day</a></li>
+                  <li class="filter-item"><a class="{% selected request 'qdr' 'w' %}" href="{% query_string 'qdr=w' 'index, page' %}">Past week</a></li>
+                  <li class="filter-item"><a class="{% selected request 'qdr' 'm' %}" href="{% query_string 'qdr=m' 'index, page' %}">Past month</a></li>
+                  <li class="filter-item"><a class="{% selected request 'qdr' 'y' %}" href="{% query_string 'qdr=y' 'index, page' %}">Past year</a></li>
                 </ul>
-                <div id="filter-box">
+                <div id="list-filter-container">
                     <h4>FILTER BY LIST</h4>
-                    <div id="list-filter" class="filter" tabindex="-1">
+                    <div id="list-filter-contents" class="filter" tabindex="-1">
                         <form id="list-filter">
                         <ul class="filter-options" tabindex="-1">
                         {% if facets.fields.email_list %}
@@ -63,23 +63,25 @@
                         </ul>
                         </form>
                     </div> <!-- list-filter -->
-                </div> <!-- filter-box -->
-                <h4>FILTER BY FROM</h4>
-                <div id="from-filter" class="filter" tabindex="-1">
-                    <form id="from-filter">
-                    <ul class="filter-options" tabindex="-1">
-                     {% if facets.fields.frm_email %}
-                        {% for email in facets.fields.frm_email %}
-                            <li class="filter-option"><input class="from-facet facetchk" type="checkbox" name="f_from" value="{{ email.0 }}" {% checked request 'f_from' email.0 %}>{{ email.0|truncatechars:18 }} ({{ email.1 }})</li>
-                        {% endfor %}
-                        {% if facets.fields.frm_email|length > 6 %}
-                            <li class="control"><a class="more-link" href="">more...</a></li>
+                </div> <!-- list-filter-container -->
+                <div id="from-filter-container">
+                    <h4>FILTER BY FROM</h4>
+                    <div id="from-filter-contents" class="filter" tabindex="-1">
+                        <form id="from-filter">
+                        <ul class="filter-options" tabindex="-1">
+                         {% if facets.fields.frm_email %}
+                            {% for email in facets.fields.frm_email %}
+                                <li class="filter-option"><input class="from-facet facetchk" type="checkbox" name="f_from" value="{{ email.0 }}" {% checked request 'f_from' email.0 %}>{{ email.0|truncatechars:18 }} ({{ email.1 }})</li>
+                            {% endfor %}
+                            {% if facets.fields.frm_email|length > 6 %}
+                                <li class="control"><a class="more-link" href="">more...</a></li>
+                            {% endif %}
+                            <li class="control"><a id="from-filter-clear" href="">Clear</a></li>
                         {% endif %}
-                        <li class="control"><a id="from-filter-clear" href="">Clear</a></li>
-                    {% endif %}
-                    </ul>
-                    </form>
-                </div> <!-- from-filter -->
+                        </ul>
+                        </form>
+                    </div> <!-- from-filter-contents -->
+                </div> <!-- from-filter-container -->
             </div> <!-- search-filters -->
         </div> <!-- msg-left-nav -->
 
@@ -89,10 +91,10 @@
                     <table id="msg-list-header-table">
                         <thead>
                             <tr>
-                                <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date</a></th>
-                                <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject</a></th>
-                                <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From</a></th>
-                                <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List</a></th>
+                                <th class="sort-header"><a id="sort-button-date" class="unsorted sortbutton" href="#">Date</a></th>
+                                <th class="sort-header"><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject</a></th>
+                                <th class="sort-header"><a id="sort-button-frm" class="unsorted sortbutton" href="#">From</a></th>
+                                <th class="sort-header"><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List</a></th>
                             </tr>
                         </thead>
                     </table>
@@ -107,7 +109,14 @@
 
                 <div id="msg-list-controls">
                     {{ count }} Messages
-
+                    
+                    {% if results.has_other_pages %}
+                    <span id="page-links">
+                        {% if results.has_previous %}<a href="?q={{ query }}&amp;page={{ results.previous_page_number }}">{% endif %}&laquo; Previous{% if results.has_previous %}</a>{% endif %}
+                        |
+                        {% if results.has_next %}<a href="?q={{ query }}&amp;page={{ results.next_page_number }}">{% endif %}Next &raquo;{% if results.has_next %}</a>{% endif %}
+                    </span>
+                    {% endif %}
                 </div> <!-- msg-list-controls -->
             </div> <!-- list-pane -->
             <div id="splitter-pane" class="draggable"></div>

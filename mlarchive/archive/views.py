@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import user_passes_test
 from django.core.cache import cache
+from django.core.paginator import Paginator, InvalidPage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.formsets import formset_factory
@@ -77,6 +78,7 @@ class CustomSearchView(SearchView):
         """
         buffer = settings.SEARCH_SCROLL_BUFFER_SIZE
         index = self.request.GET.get('index')
+        page_no = self.request.GET.get('page',1)
         if index:
             position = self.find_message(index)
             if position == -1:
@@ -85,8 +87,17 @@ class CustomSearchView(SearchView):
             selected_offset = position if position < buffer else buffer
             return (self.results[start:position + self.results_per_page + 1], start, selected_offset)
         else:
-            return (self.results[:self.results_per_page + 1],0,0)
-
+            #start_offset = (page_no - 1) * self.results_per_page
+            #self.results[start_offset:start_offset + self.results_per_page]
+            paginator = Paginator(self.results, self.results_per_page)
+            try:
+                page = paginator.page(page_no)
+            except InvalidPage:
+                page = paginator.page(1)
+            
+            #return (self.results[:self.results_per_page + 1],0,0)
+            return (page,0,0)
+            
     def extra_context(self):
         """Add variables to template context"""
         extra = super(CustomSearchView, self).extra_context()

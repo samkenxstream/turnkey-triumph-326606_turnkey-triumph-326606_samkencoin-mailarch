@@ -1,0 +1,13 @@
+a.not-active {
+    pointer-events: none;
+    cursor: default;
+    color: black;
+}
+
+#list-pane {
+    height: 250px;
+}
+
+#view-pane{
+}
+
