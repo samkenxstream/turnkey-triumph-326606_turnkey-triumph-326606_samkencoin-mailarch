@@ -1,0 +1,178 @@
+=======================================
+Email Archive Installation Instructions
+=======================================
+
+
+General Instructions for Deployment of a New Release
+====================================================
+
+
+ 1. In order to fetch a new release of the django mail archive code, simply
+    check out the appropriate tag from svn::
+
+      svn co http://svn.tools.ietf.org/svn/tools/mailarch/tags/$releasenumber
+
+ 2. Don't forget to copy $releasenumber/mlarchive/settings/secrets.json from the
+    old release to the new one; otherwise things won't work!
+    ::
+
+      cp $oldreleasenumber/mlarchive/settings/secrets.json $releasenumber/mlarchive/settings/
+
+ 3. Change into the directory of the new release and run migrations::
+
+      cd $releasenumber
+      PYTHONPATH=$PWD django-admin.py migrate --settings=mlarchive.settings.production
+      cd ..
+
+ 4. Then re-point the 'current' symlink::
+
+      rm ./current; ln -s $releasenumber current
+
+ 5. Restart apache::
+
+      sudo /etc/init.d/apache2 restart
+
+ 6. It's now also a good idea to go to the mailarchive front page:
+
+      http://mailarchive.ietf.org/
+
+    to check that it's alive and kicking, and displaying the new release
+    number at the bottom of the page
+
+ 7. If things **aren't** cool, revert the symlink step, re-pointing the
+    symlink to the release that was running before the new release, and restart
+    apache again to roll back to that.
+
+
+Installing from Scratch
+=======================
+
+DEPENDENCIES
+============
+Python 2.7
+MySQL 5.5
+xapian-core 1.2.12
+python-xapian 1.2.12
+python-memcached
+lxml 3.3.1
+memcached 1.4.15
+RabbitMQ Server 2.8.7
+Celery v3.1.17
+Django 1.7 (Included)
+Haystack 2.1.1 (Included)
+
+
+Python Packages
+---------------
+pip install python-dateutil
+pip install pytest-django
+pip install factory-boy
+
+Prerequisites
+-------------
+1. Install and configure memcached 
+zypper install memcached
+chkconfig memcached on
+
+2. Install and configure RabbitMQ
+zypper install rabbitmq-server
+zypper install rabbitmq-server-plugins
+rabbitmq-plugins enable rabbitmq_management
+chkconfig rabbitmq-server on
+
+see: http://www.rabbitmq.com/man/rabbitmqctl.1.man.html
+
+3. Install and configure celery
+pip install celery
+cp INSTALL_DIR/celery/celeryd /etc/init.d
+cp INSTALL_DIR/celery/celeryd.conf /etc/default/celeryd
+add unpriviledged user celery, GROUP=celery
+chkconfig celeryd on
+
+SETUP:
+The following steps will refer to INSTALL_DIR (ie. /a/mailarch )
+
+1. Download software via SVN checkout
+svn checkout http://svn.tools.ietf.org/svn/tools/mailarch/trunk
+
+2. Create a symlink to the release directory, INSTALL_DIR/current -> INSTALL_DIR/trunk
+
+3. Create (or copy) INSTALL_DIR/current/mlarchive/settings/secrets.json which contains production
+settings.  It should cotain the following settings: 
+
+Example:
+{
+    "FILENAME": "secrets.json",
+    "SECRET_KEY": [KEY],
+    "DATABASES_NAME": "archive",
+    "DATABASES_TEST_NAME": "archive_test",
+    "DATABASES_USER": [USER],
+    "DATABASES_PASSWORD": [PASSORD],
+    "HTAUTH_PASSWD_FILENAME": "/Users/ams/dev/mailarch/htpasswd"
+}
+
+4. Sample Apache Configuration
+
+        RemoveHandler cgi-script .py
+        Alias /static/ /a/mailarch/current/static/
+
+        WSGIScriptAlias / /a/mailarch/current/mlarchive/productions.wsgi
+        WSGIApplicationGroup %{GLOBAL}
+        WSGIProcessGroup mailarchive.ietf.org
+
+        <Directory /a/mailarch>
+            #Order allow,deny
+            #Allow from all
+            Options FollowSymLinks
+        </Directory>
+
+        <Directory /a/mailarch/current/static>
+            Order allow,deny
+            Allow from all
+        </Directory>
+
+        <Directory /a/mailarch/current/mlarchive>
+        <Files wsgi.py>
+            Order deny,allow
+            Allow from all
+        </Files>
+        </Directory>
+
+
+5. Configure mailmain
+
+copy INSTALL_DIR/trunk/mlarchive/bin/call-archives.py /a/ietf/scripts
+/a/mailman/Mailman/mm_cfg:
+PUBLIC_EXTERNAL_ARCHIVER = '/a/ietf/scripts/call-archives.py %(listname)s --public'
+PRIVATE_EXTERNAL_ARCHIVER = '/a/ietf/scripts/call-archives.py %(listname)s --private'
+
+Modify ARCHIVE ALIASES in /a/postfix/aliases
+
+ietfarch-atompub-archive:               "|/a/ietf/scripts/archive-mail atompub"
+
+-> 
+
+ietfarch-atompub-archive:               "|/a/ietf/scripts/call-archives atompub"
+x) Install Cronscripts
+
+
+6. Xapian Replication
+On the Server: add the following line to celeryd.conf:
+export XAPIAN_MAX_CHANGESETS=10
+
+Copy systemd/xapian-replicate-server.service to /etc/systemd/system/
+# systemctl enable xapian-replicate-server
+# systemctl start xapian-replicate-server
+
+On the Client: periodically run the following
+
+cd /a/mailarch/data
+xapian-replicate -o -h [server hostname] -p 7010 archive_index
+
+
+TESTING:
+Testing requires an instance of the message Xapian message index.  It must contain an
+import of the following lists:
+
+To run the tests
+$ py.test tests
