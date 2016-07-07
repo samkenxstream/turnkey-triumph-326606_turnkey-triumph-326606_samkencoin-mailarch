@@ -1,0 +1,95 @@
+{% extends "base_960.html" %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/admin.js"></script>
+{% endblock %}
+
+{% block title %}Mail Archive - Admin{% endblock %}
+
+{% block header %}{{ block.super }} - Admin{% endblock %}
+
+{% block content %}
+
+<div id="admin_page">
+<div id="admin_top">
+    <div id="admin_search_form">
+        <form id="id_admin_form" name="admin-search-form" action="." method="post">{% csrf_token %}
+            <table id="admin_search_table">
+                <tr><td>Subject:</td><td>{{ form.subject }}</td><td>Message-ID:</td><td>{{ form.msgid }}</td></tr>
+                <tr><td>From:</td><td>{{ form.frm }}</td><td>List:</td><td>{{ form.email_list }}</td></tr>
+                <tr><td>Date Range:</td><td>{{ form.start_date }} to {{ form.end_date }}</td><td>Spam / Spam Score:</td><td>{{ form.spam }}&nbsp;{{ form.spam_score }}<input id="id_submit" type="submit" name="submit" value="Search"/></td></tr>
+                <tr><td colspan="4"></td></tr>
+            </table>
+        </form>
+    </div> <!-- admin_search_form -->
+</div> <!-- admin_top -->
+
+
+<div id="result-list" tabindex="-1">
+<h2>Results{% if results %} ({{ results|length }}){% endif %}</h2>
+<form id="id_admin_action" name="admin-action-form" action="." method="post">{% csrf_token %}
+
+<div id="admin-controls">
+    <div class="admin_ctrl">
+        <input type="checkbox" id="selectall" value="selectall" name="selectall"> Select All
+    </div>
+    <div class="admin_ctrl">
+        <label>Action:
+            <select name="action">
+                <option value="" selected="selected">---------</option>
+                <option value="remove_selected">Remove selected messages</option>
+                <option value="not_spam">Mark selected not spam</option>
+            </select>
+        </label>
+        <input type="hidden" class="select-across" value="0" name="select_across" />
+        <button type="submit" class="button" title="Run the selected action" name="index" value="0">Go</button>
+    </div>
+</div> <!-- admin-controls -->
+
+<div id="admin-results" tabindex="-1">
+<table id="result-table">
+    <tr>
+        <th class="col1"></th>
+        <th class="col2">#</th>
+        <th class="col3">Subject</th>
+        <th class="col4">From</th>
+        <th class="col5">To</th>
+    </tr>
+    {% if results %}
+        {% for item in results %}
+          <tr>
+            <td><input type="checkbox" class="action-select" value="{{ item.object.pk }}" name="_selected_action"></td>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.object.subject }}</td>
+            <td>{{ item.object.frm_realname }}</td>
+            <td>{{ item.object.to }}</td>
+            <td class="hidden">{{ item.object.get_absolute_url }}</td>
+            <td>{{ item.object.pk }}</td>
+          </tr>
+        {% endfor %}
+    {% else %}
+        {% if request.method == "POST" %}
+        <tr>
+            <td></td>
+            <td></td>
+            <td>No Results</td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% endif %}
+    {% endif %}
+</table>
+</div> <!-- admin-results -->
+</form>
+</div>
+
+<div id="admin-view-pane">
+</div>
+
+</div> <!-- admin_page -->
+
+
+{% endblock %}
+
+

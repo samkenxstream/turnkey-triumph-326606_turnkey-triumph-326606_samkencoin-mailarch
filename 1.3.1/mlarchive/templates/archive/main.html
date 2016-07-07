@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+<script type="text/javascript">
+$(function() {
+    $('#id_q').focus();
+});
+</script>
+{% endblock %}
+
+{% block title %}Mail Archive{% endblock %}
+
+{% block content %}
+
+<div id="search-container">
+  
+  <div id="search-input">
+  <form id="id_search_form" name="search-form" action="search" method="get">
+      <div>
+        <div class="input-group">
+          <input id="id_q" name="q" type="search" class="form-control" placeholder="Search for..." {% if query %}value="{{ query }}"{% endif %}>
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="submit">
+              <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+            </button>
+          </span>
+        </div><!-- input-group -->
+      </div>
+  </form>
+  </div> <!-- search-input -->
+  
+  <div id="nav-outer">
+    <div id="nav-inner">
+    <ul id="navigation">
+      <li><a href="{% url "archive_advsearch" %}">Advanced Search</a></li>
+      <li><a href="{% url "archive_browse" %}">Browse</a></li>
+      {% if request.user.is_superuser %}
+        <li><a href="{% url "archive_admin" %}">Admin</a></li>
+      {% endif %}
+    </ul>
+    </div>
+  </div>
+  
+</div>
+
+{% endblock %}
+
+

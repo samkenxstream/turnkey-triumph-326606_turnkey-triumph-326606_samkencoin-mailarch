@@ -1,0 +1,52 @@
+{% extends "base_960.html" %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{{ STATIC_URL }}js/browse.js"></script>
+{% endblock %}
+
+{% block title %}Mail Archive{% endblock %}
+
+{% block header %}{{ block.super }} - Browse{% endblock %}
+
+{% block content %}
+
+<div id="browse_page">
+
+<div id="browse_top">
+<form id="id_browse_form" name="browse-form" action="." method="post">{% csrf_token %}
+    <label for="id_list_name">Enter list name:</label> <input id="id_list_name" type="text" name="list_name" maxlength="100" />
+    <input type="submit" value="Go" title="Go" alt="Go" name="browse">
+    <span id="browse_help">(or pick from below)</span>
+</form>
+</div>
+
+<div id="private-lists" class="browse_section">
+{% if columns.private %}
+<h2>Private Lists</h2>
+{% with columns.private as columns %}
+    {% include "includes/browse_columns.html" %}
+{% endwith %}
+{% endif %}
+</div>
+
+<div id="active-lists" class="browse_section">
+<h2>Active Lists</h2>
+{% with columns.active as columns %}
+    {% include "includes/browse_columns.html" %}
+{% endwith %}
+</div>
+
+<div id="inactive-lists" class="browse_section">
+{% if columns.inactive %}
+<h2>Inactive Lists</h2>
+{% with columns.inactive as columns %}
+    {% include "includes/browse_columns.html" %}
+{% endwith %}
+{% endif %}
+</div>
+
+</div> <!-- browse_page -->
+
+{% endblock %}
+
+
