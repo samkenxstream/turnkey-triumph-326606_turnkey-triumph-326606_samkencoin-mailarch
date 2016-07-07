@@ -209,7 +209,7 @@ class AdvancedSearchForm(FacetedSearchForm):
     #        widget=forms.TextInput(attrs={'class':'defaultText','title':'YYYY-MM-DD'}))
     end_date = DatepickerDateField(date_format="yyyy-mm-dd", picker_settings={"autoclose": "1" }, label='End date', required=False)
     #email_list = forms.CharField(max_length=255,required=False,widget=forms.HiddenInput)
-    email_list = forms.ModelMultipleChoiceField(queryset=EmailList.objects,required=False)
+    email_list = forms.ModelMultipleChoiceField(queryset=EmailList.objects,to_field_name='name',required=False)
     subject = forms.CharField(max_length=255,required=False)
     frm = forms.CharField(max_length=255,required=False)
     msgid = forms.CharField(max_length=255,required=False)
@@ -420,11 +420,7 @@ class AdvancedSearchForm(FacetedSearchForm):
         return sqs
 
     def clean_email_list(self):
-        # take a comma separated list of email_list names and convert to list of ids
-        names = self.cleaned_data['email_list']
-        if not names:
-            return None
-        return map(get_list_info,names.split(','))
+        return [ n.pk for n in self.cleaned_data['email_list'] ]
 
     def clean_f_list(self):
         # take a comma separated list of email_list names and convert to list of ids
