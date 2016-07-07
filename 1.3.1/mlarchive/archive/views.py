@@ -1,6 +1,7 @@
 import json
 import re
 import os
+import urllib
 
 from django.conf import settings
 from django.contrib import messages
@@ -241,8 +242,16 @@ def browse(request, list_name=None):
         redirect_url = '%s?%s' % (reverse('archive_search'), 'email_list=' + list_name)
         return redirect(redirect_url)
 
-    form = BrowseForm()
+    #form = BrowseForm()
     columns = get_columns(request.user)
+
+    if request.method == "GET" and request.GET.get('list'):
+        form = BrowseForm(request=request,data=request.GET)
+        if form.is_valid():
+            params = [('email_list',form.cleaned_data['list'].name)]
+            return redirect("%s?%s" % (reverse('archive_search'),urllib.urlencode(params)))
+    else:
+        form = BrowseForm(request=request)
 
     return render_to_response('archive/browse.html', {
         'form': form,
