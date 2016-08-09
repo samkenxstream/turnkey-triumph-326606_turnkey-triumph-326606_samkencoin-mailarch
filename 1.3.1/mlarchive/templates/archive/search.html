@@ -1,34 +1,12 @@
 {% extends 'base.html' %}
 
-{% load archive_extras %}
+{% load archive_extras widget_tweaks %}
 
 
 {% block title %}Mail Archive{% endblock %}
 
 {% block content %}
 
-    <div id="toolbar">
-        <div id="browse-header" class="{% if browse_list.private %} private{% endif %}">
-            {% if browse_list %}
-              Browse: {{ browse_list.name }}
-            {% else %}
-              <a id="modify-search" href="{{ modify_search_url }}">Modify search</a>
-            {% endif %}
-              <a id="clear-sort" href="#">Clear Sort</a>
-        </div>
-        <div id="search-header">
-          <form name="search-form" id="id_search_form" method="get">
-            <button id="group-button" type="button">{% if thread_sorted %}Ungroup{% else %}Group by Thread{% endif %}</button>
-            {{ form.q }}
-            <button id="search-button" type="submit">Search</button>
-            <button id="export-button" type="button">Export</button>
-            <ul id="export-options" class="ui-widget-content" tabindex="-1">
-                <li><a href="{{ export_mbox }}">Mbox</a></li>
-                <li><a href="{{ export_maildir }}">Maildir</a></li>
-            </ul>
-          </form>
-        </div> <!-- search-header -->
-    </div> <!-- toolbar -->
 
     <div id="msg-container">
         <div id="sidebar">
@@ -76,34 +54,73 @@
                     </form>
                 </div> <!-- from-filter -->
             </div> <!-- search-filters -->
-        </div> <!-- msg-left-nav -->
+        </div> <!-- sidebar -->
 
         <div id="msg-panes">
+        
+            <nav id="toolbar" class="navbar">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <ul class="nav navbar-nav navbar-left">
+                            {% if browse_list %}
+                                <li>Browse: {{ browse_list.name }}</li>
+                            {% else %}
+                                <li><a id="modify-search" href="{{ modify_search_url }}">Modify search</a></li>
+                            {% endif %}
+                            <!-- <li><a id="clear-sort" href="#">Clear Sort</a></li> -->
+                        </ul>
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div> <!-- navbar-header -->
+
+                    <div class="collapse navbar-collapse" id="myNavbar">
+                        <form name="search-form" id="id_search_form" class="navbar-form navbar-right" method="get">
+                            <button id="group-button" class="btn btn-default" type="button">{% if thread_sorted %}Ungroup{% else %}Group by Thread{% endif %}</button>
+                            {% render_field form.q class="form-control" %}
+                            <button id="search-button" class="btn btn-default" type="submit">Search</button>
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Export <span class="caret"></span>
+                                </button>
+                                <ul id="export-options" class="dropdown-menu">
+                                    <li><a href="{{ export_mbox }}">Mbox</a></li>
+                                    <li><a href="{{ export_maildir }}">Maildir</a></li>
+                                </ul>
+                            </div> <!-- button-group -->
+                        </form>
+                    </div> <!-- myNavbar -->
+                </div> <!-- container-fluid -->
+            </nav> <!-- toolbar -->
+    
             <div id="list-pane">
-                <div id="msg-list-header">
-                    <table id="msg-list-header-table">
+                
+                <div class="msg-list wrapper" data-queryid="{{ queryid }}" data-queryset-offset="{{ queryset_offset }}" data-selected-offset="{{ selected_offset }}">
+                    <table class="table msg-table">
                         <thead>
                             <tr>
-                                <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date</a></th>
-                                <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject</a></th>
-                                <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From</a></th>
-                                <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List</a></th>
+                                <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
+                                <th class="hidden"></th>
                             </tr>
                         </thead>
-                    </table>
-                </div>
-                <div id="msg-list" tabindex="-1" data-queryid="{{ queryid }}" data-queryset-offset="{{ queryset_offset }}" data-selected-offset="{{ selected_offset }}">
-                    <table id="msg-table" class="no-zebra">
                         <tbody>
-                        {% include "includes/results_rows.html" %}
+                            {% include "includes/results_rows.html" %}
                         </tbody>
                     </table>
                 </div> <!-- msg-list -->
 
                 <div id="msg-list-controls">
                     {{ count }} Messages
-
                 </div> <!-- msg-list-controls -->
+
             </div> <!-- list-pane -->
             <div id="splitter-pane" class="draggable"></div>
             <div id="view-pane"></div>
@@ -114,5 +131,7 @@
 {% block js %}
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.query.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/search.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.floatThead.js"></script>
+<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/search.js"></script> -->
+<script type="text/javascript" src="{{ STATIC_URL }}js/mailarch-1.0.js"></script>
 {% endblock %}

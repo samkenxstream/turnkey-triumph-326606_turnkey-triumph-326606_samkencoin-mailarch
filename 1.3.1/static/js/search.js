@@ -16,6 +16,7 @@ sortDefault['frm'] = 'frm';
 sortDefault['score'] = '-score';
 sortDefault['subject'] = 'subject';
 
+
 $(function() {
 
     // HELPER FUNCTIONS =====================================
@@ -269,19 +270,19 @@ $(function() {
             });
         }
         // stretch query box to fill toolbar
-        var w = $('#content').width() - $('#browse-header').width() - 500;
-        $('#id_q').width(w);
+        //var w = $('#content').width() - $('#browse-header').width() - 500;
+        //$('#id_q').width(w);
     }
 
     function setup_buttons() {
         // TOOLBAR =============================================
-        $('#search-button').button();
-        $('#export-button').button({
-            icons: {
-                secondary: "ui-icon-triangle-1-s"
-            }
-        });
-        $('#group-button').button();
+        //$('#search-button').button();
+        //$('#export-button').button({
+        //    icons: {
+        //        secondary: "ui-icon-triangle-1-s"
+        //    }
+        //});
+        //$('#group-button').button();
         $('#group-button').click(function() {
             // event.preventDefault();
             if(urlParams.hasOwnProperty('gbt')) {
@@ -358,7 +359,7 @@ $(function() {
         $('#clear-sort').click(function() {
             reset_sort();
         });
-        $('a.sortbutton').button();
+        //$('a.sortbutton').button();
         var so = $.query.get('so');
         if(!so){
             $('#clear-sort').hide();

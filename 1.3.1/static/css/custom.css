@@ -1,5 +1,5 @@
 body {
-    padding-top: 40px;
+    padding-top: 44px;
 }
 /* ==========================================================================
    Selectize Bootstrap overrides
@@ -60,6 +60,11 @@ ul.messages li {
     color: darkgrey;
     padding: 4px 15px;
     text-align: center;
+}
+
+#msg-payload pre {
+    background-color: white;
+    border: 0 none black;
 }
 
 /* ==========================================================================
@@ -263,4 +268,142 @@ ul.browse_list li {
 
 #result-list .row {
     margin-bottom: 15px;
+}
+
+/* ==========================================================================
+   Search
+   ========================================================================== */
+#sidebar {
+    color: #808080;
+    float: left;
+    height: calc(100vh - 44px);
+    padding-left: 20px;
+    width: 300px;
+}
+
+#sidebar ul {
+    padding-left: 0;
+    margin-bottom: 18px;
+}
+
+.filter-options li {
+    list-style: none outside none;
+}
+
+.filter-options li input {
+    margin-left: 0;
+    margin-right: 4px;
+}
+
+.navbar-form #id_q {
+    width: calc(100vw - 790px);
+}
+
+#msg-panes {
+    float: left;
+    width: calc(100% - 300px);
+    position: relative;
+}
+
+#msg-panes .navbar {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.msg-list {
+    height: 200px;
+    overflow: auto;
+    position: relative;
+}
+
+#msg-list-controls {
+    border-top: 1px solid rgb(238, 238, 238);
+    padding: 8px 1em 8px 1em;
+}
+
+table.msg-table > thead > tr > th {
+    padding: 0;
+    padding-left: 8px;
+}
+
+table.msg-table th:hover {
+    background-color: rgb(238,238,238)
+}
+
+table.msg-table th a {
+    color: black;
+    padding: 8px 8px 8px 0;
+    display:inline-block;
+    width:100%;
+}
+
+table.msg-table th a:hover {
+    text-decoration: none;
+}
+
+table.msg-list-header-table th a.btn {
+    border: 0;
+}
+
+.glyphicon-sort-by-attributes, .glyphicon-sort-by-attributes-alt {
+    float: right;
+    vertical-align: middle;
+    color: lightgrey;
+    padding-top: 3px;
+}
+
+.glyphicon.sort-active {
+    color: black;
+}
+
+table.floatThead-table {
+    border-top: none;
+    border-bottom: none;
+    background-color: #FFF;
+}
+
+#list-pane {
+    /* height: calc((100vh - 106px)/2); */
+    /* overflow-y: scroll; */
+    /* min-height: 150px; */
+}
+
+.row-selected {
+    background-color: #DDECFE;
+}
+
+#view-pane {
+    /* height: calc((100vh - 106px)/2); */
+    border-top: 1px solid rgb(238, 238, 238);
+    height: calc(100vh - 344px);
+    overflow-y: scroll;
+}
+
+.msg-header {
+    color: #808080;
+}
+
+}
+@media (max-width: 768px)
+{
+    #sidebar {
+        display: none;
+    }
+    
+    #msg-panes {
+        width: 100%;
+    }
+    
+    #view-pane {
+        display: none;
+    }
+}
+
+
+
+/* ==========================================================================
+   Test
+   ========================================================================== */
+#view-pane {
+    /* background-color: #F0FFFF; */
 }

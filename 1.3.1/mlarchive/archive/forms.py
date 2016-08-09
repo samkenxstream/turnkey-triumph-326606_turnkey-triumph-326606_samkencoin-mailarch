@@ -243,8 +243,8 @@ class AdvancedSearchForm(FacetedSearchForm):
         if facets:
             return facets
 
-        if settings.DEBUG:
-            messages.info(self.request,'Facets not in cache')
+        #if settings.DEBUG:
+        #    messages.info(self.request,'Facets not in cache')
 
         # calculating facet_counts on large results sets is too costly so skip it
         # If you call results.count() before results.facet_counts() the facet_counts
