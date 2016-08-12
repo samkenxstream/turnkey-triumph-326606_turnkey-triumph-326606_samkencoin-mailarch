@@ -56,7 +56,7 @@
             </div> <!-- search-filters -->
         </div> <!-- sidebar -->
 
-        <div id="msg-panes">
+        <div id="msg-components">
         
             <nav id="toolbar" class="navbar">
                 <div class="container-fluid">
@@ -96,35 +96,38 @@
                 </div> <!-- container-fluid -->
             </nav> <!-- toolbar -->
     
-            <div id="list-pane">
+            
+            <div id="msg-panes">
+                <div id="list-pane">    
+                    <div class="msg-list wrapper" tabindex="-1" data-queryid="{{ queryid }}" data-queryset-offset="{{ queryset_offset }}" data-selected-offset="{{ selected_offset }}">
+                        <table class="table table-condensed msg-table">
+                            <thead>
+                                <tr>
+                                    <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                    <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                    <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                    <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                    <th class="hidden"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% include "includes/results_rows.html" %}
+                            </tbody>
+                        </table>
+                    </div> <!-- msg-list -->
+
+                    <div id="msg-list-controls">
+                        {{ count }} Messages
+                    </div> <!-- msg-list-controls -->
+                </div> <!-- list-pane -->
                 
-                <div class="msg-list wrapper" data-queryid="{{ queryid }}" data-queryset-offset="{{ queryset_offset }}" data-selected-offset="{{ selected_offset }}">
-                    <table class="table msg-table">
-                        <thead>
-                            <tr>
-                                <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                <th class="hidden"></th>
-                                <th class="hidden"></th>
-                                <th class="hidden"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% include "includes/results_rows.html" %}
-                        </tbody>
-                    </table>
-                </div> <!-- msg-list -->
-
-                <div id="msg-list-controls">
-                    {{ count }} Messages
-                </div> <!-- msg-list-controls -->
-
-            </div> <!-- list-pane -->
-            <div id="splitter-pane" class="draggable"></div>
-            <div id="view-pane"></div>
-        </div> <!-- msg-panes -->
+                <div id="splitter-pane" class="draggable"></div>
+                
+                <div id="view-pane"></div>
+            </div> <!-- msg-panes -->
+        </div> <!-- msg-components -->
     </div> <!-- msg-container -->
 {% endblock %}
 

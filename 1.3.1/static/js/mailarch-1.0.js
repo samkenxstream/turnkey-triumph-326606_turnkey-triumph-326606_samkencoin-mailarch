@@ -13,6 +13,7 @@ var mailarch = {
     lastItem: 0,
     urlParams: {},
     sortDefault: new Array(),
+    defaultListPaneHeight: 229,
     
     // PRIMARY FUNCTIONS =====================================
     
@@ -25,8 +26,8 @@ var mailarch = {
         });
         
         
-        mailarch.$msgListHeaderTable = $(".msg-list-header-table");
-        mailarch.$msgTable = $('.msg-table');
+        //mailarch.$msgListHeaderTable = $(".msg-list-header-table");
+        
         //mailarch.copyColumnWidths();
         mailarch.cacheDom();
         
@@ -38,7 +39,7 @@ var mailarch = {
         mailarch.selectInitialMessage();
         mailarch.initFilters();
         mailarch.setLastItem();
-        //mailarch.initSplitter();
+        mailarch.initSplitter();
         mailarch.getURLParams();
         mailarch.initSort();
     },
@@ -59,8 +60,9 @@ var mailarch = {
         mailarch.$listPane = $("#list-pane");
         mailarch.$modifySearch = $('#modify-search');
         mailarch.$moreLinks = $('.more-link');
-        mailarch.$msgList = $('#msg-list');
-
+        mailarch.$msgList = $('.msg-list');
+        mailarch.$msgTable = $('.msg-table');
+        mailarch.$msgTableTbody = this.$msgTable.find('tbody');
         mailarch.$msgTableRows = this.$msgTable.find('tr');
         mailarch.$pageLinks = $('#page-links');
         mailarch.$q = $('#id_q');
@@ -190,7 +192,7 @@ var mailarch = {
             });
             request.done(function(data, testStatus, xhr) {
                 if(xhr.status == 200){
-                    $('#msg-table tbody').append(data);
+                    mailarch.$msgTableTbody.append(data);
                     mailarch.setLastItem();
                 } else if(xhr.status == 204)  {
                     mailarch.$msgList.off( "scroll" );
@@ -218,7 +220,7 @@ var mailarch = {
                     // meaning user loses context, so we need to reposition
                     // scrollTop after prepend.
                     var lengthBefore = mailarch.$msgTable.find('tr').length;
-                    mailarch.$msgTable.find('tbody').prepend(data);
+                    mailarch.$msgTableTbody.prepend(data);
                     var numNewRows = mailarch.$msgTable.find('tr').length - lengthBefore;
                     var newOffset = firstItem - numNewRows;
                     var rowHeight = mailarch.$msgTable.find('tr:eq(0)').height();
@@ -310,6 +312,7 @@ var mailarch = {
             drag: function(event, ui){
                 var top = ui.position.top;
                 mailarch.$listPane.css("height",top-3);
+                //$(".msg-list").css("height",top-144-20);
                 mailarch.$viewPane.css("top",top+3);
             },
             stop: function(event, ui){
@@ -323,7 +326,7 @@ var mailarch = {
         if(splitterValue) {
             mailarch.setSplitter(splitterValue);
         } else {
-            mailarch.setSplitter(175);  // optimize for 1024x768
+            mailarch.setSplitter(mailarch.defaultListPaneHeight);  // optimize for 1024x768
         }
     },
     
