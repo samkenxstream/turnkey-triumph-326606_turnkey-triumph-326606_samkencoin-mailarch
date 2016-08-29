@@ -53,7 +53,7 @@ def test_ajax_get_messages(client,messages):
     assert response.status_code == 200
     assert len(response.context['results']) == 6
     q = PyQuery(response.content)
-    id = q('#msg-list').attr('data-queryid')
+    id = q('.msg-list').attr('data-queryid')
 
     # test successful get_messages call
     url = '%s/?queryid=%s&lastitem=2' % (reverse('ajax_messages'), id)

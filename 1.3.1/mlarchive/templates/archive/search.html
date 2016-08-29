@@ -58,19 +58,11 @@
 
         <div id="msg-components">
         
-            <nav id="toolbar" class="navbar">
+            <nav id="toolbar" class="navbar navbar-default">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        <ul class="nav navbar-nav navbar-left">
-                            {% if browse_list %}
-                                <li>Browse: {{ browse_list.name }}</li>
-                            {% else %}
-                                <li><a id="modify-search" href="{{ modify_search_url }}">Modify search</a></li>
-                            {% endif %}
-                            <!-- <li><a id="clear-sort" href="#">Clear Sort</a></li> -->
-                        </ul>
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                            <span class="icon-bar"></span>
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#myNavbar" aria-expanded="false">
+                            <span class="sr-only">Toggle toolbar</span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
@@ -78,20 +70,35 @@
                     </div> <!-- navbar-header -->
 
                     <div class="collapse navbar-collapse" id="myNavbar">
-                        <form name="search-form" id="id_search_form" class="navbar-form navbar-right" method="get">
-                            <button id="group-button" class="btn btn-default" type="button">{% if thread_sorted %}Ungroup{% else %}Group by Thread{% endif %}</button>
-                            {% render_field form.q class="form-control" %}
-                            <button id="search-button" class="btn btn-default" type="submit">Search</button>
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Export <span class="caret"></span>
-                                </button>
-                                <ul id="export-options" class="dropdown-menu">
+                        <ul class="nav navbar-nav navbar-left">
+                            {% if browse_list %}
+                                <li>Browse: {{ browse_list.name }}</li>
+                            {% else %}
+                                <li><a id="modify-search" href="{{ modify_search_url }}">Modify search</a></li>
+                            {% endif %}
+                            <!-- <li><a id="clear-sort" href="#">Clear Sort</a></li> -->
+                            <li{% if not thread_sorted %} class="active"{% endif %}><a href="{{ view_date_url }}">Date</a></li>
+                            <li{% if thread_sorted %} class="active"{% endif %}><a href="{{ view_thread_url }}">Thread</a></li>
+                        </ul>
+                        <form name="search-form" id="id_search_form" class="navbar-form navbar-left" method="get">
+                            <div class="input-group">
+                                {% render_field form.q class="form-control" %}
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Export <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
                                     <li><a href="{{ export_mbox }}">Mbox</a></li>
                                     <li><a href="{{ export_maildir }}">Maildir</a></li>
                                 </ul>
-                            </div> <!-- button-group -->
-                        </form>
+                            </li>
+                        </ul> <!-- nav navbar-nav -->
                     </div> <!-- myNavbar -->
                 </div> <!-- container-fluid -->
             </nav> <!-- toolbar -->

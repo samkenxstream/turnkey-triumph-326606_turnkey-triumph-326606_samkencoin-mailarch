@@ -305,6 +305,10 @@ var mailarch = {
     },
     
     initSplitter: function() {
+        // no splitter for mobile
+        if ($(window).width() <= 768) {
+            return true;
+        } 
         mailarch.$splitterPane.draggable({
             axis:"y",
             //containment:"parent",

@@ -11,7 +11,7 @@ from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms.formsets import formset_factory
-from django.http import HttpResponseRedirect, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponse, Http404, QueryDict
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from haystack.views import SearchView, FacetedSearchView
@@ -105,10 +105,17 @@ class CustomSearchView(SearchView):
         extra['browse_list'] = browse_list
 
         # thread sort
+        new_query = self.request.GET.copy()
         if 'gbt' in self.request.GET:
             extra['thread_sorted'] = True
+            extra['view_thread_url'] = reverse('archive_search') + query_string
+            _ = new_query.pop('gbt')
+            extra['view_date_url' ] = reverse('archive_search') + '?' + new_query.urlencode()
         else:
             extra['thread_sorted'] = False
+            extra['view_date_url'] = reverse('archive_search') + query_string
+            new_query['gbt'] = 1
+            extra['view_thread_url'] = reverse('archive_search') + '?' + new_query.urlencode()
 
         # export links
         extra['export_mbox'] = reverse('archive_export',kwargs={'type':'mbox'}) + query_string
