@@ -547,6 +547,22 @@ table.floatThead-table {
 }
 
 /* ==========================================================================
+   Admin Guide
+   ========================================================================== */
+/* fix for fragment identifier and fixed header */
+#admin_page h2:before { 
+  display: block; 
+  content: " "; 
+  margin-top: -44px; 
+  height: 44px; 
+  visibility: hidden; 
+}
+
+#topics {
+    margin-top: 20px;
+}
+
+/* ==========================================================================
    Test
    ========================================================================== */
 #view-pane {
