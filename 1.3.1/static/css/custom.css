@@ -515,7 +515,36 @@ table.floatThead-table {
     }
 }
 
+/* ==========================================================================
+   Message Detail
+   ========================================================================== */
 
+#msg-aside ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: left;
+}
+
+#msg-aside ul li {
+    margin: 1em 0;
+}
+
+#msg-nav {
+    margin-bottom: 60px;
+}
+
+#msg-nav ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+#msg-nav ul li {
+    display: inline;
+    margin: 0 2em 0 2em;
+}
 
 /* ==========================================================================
    Test
