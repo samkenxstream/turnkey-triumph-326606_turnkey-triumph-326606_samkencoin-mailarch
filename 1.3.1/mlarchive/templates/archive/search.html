@@ -5,6 +5,10 @@
 
 {% block title %}Mail Archive{% endblock %}
 
+{% block prestyle %}
+<link href="http://jquery-ui-bootstrap.github.io/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
+{% endblock %}
+
 {% block content %}
 
 
@@ -74,22 +78,13 @@
                             {% if browse_list %}
                                 <li>Browse: {{ browse_list.name }}</li>
                             {% else %}
-                                <li><a id="modify-search" href="{{ modify_search_url }}">Modify search</a></li>
+                                <li><a id="modify-search" href="{{ modify_search_url }}" title="Modify Search"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></a></li>
                             {% endif %}
                             <!-- <li><a id="clear-sort" href="#">Clear Sort</a></li> -->
                             <li{% if not thread_sorted %} class="active"{% endif %}><a href="{{ view_date_url }}">Date</a></li>
                             <li{% if thread_sorted %} class="active"{% endif %}><a href="{{ view_thread_url }}">Thread</a></li>
                         </ul>
-                        <form name="search-form" id="id_search_form" class="navbar-form navbar-left" method="get">
-                            <div class="input-group">
-                                {% render_field form.q class="form-control" %}
-                                <span class="input-group-btn">
-                                    <button class="btn btn-default" type="submit">
-                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                                    </button>
-                                </span>
-                            </div>
-                        </form>
+                        
                         <ul class="nav navbar-nav navbar-right">
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Export <span class="caret"></span></a>
@@ -99,6 +94,17 @@
                                 </ul>
                             </li>
                         </ul> <!-- nav navbar-nav -->
+                        <form name="search-form" id="id_search_form" class="navbar-form navbar-right" method="get">
+                            <div class="input-group">
+                                {% render_field form.q class="form-control" %}
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit">
+                                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+
                     </div> <!-- myNavbar -->
                 </div> <!-- container-fluid -->
             </nav> <!-- toolbar -->
@@ -139,6 +145,7 @@
 {% endblock %}
 
 {% block js %}
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.query.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.floatThead.js"></script>

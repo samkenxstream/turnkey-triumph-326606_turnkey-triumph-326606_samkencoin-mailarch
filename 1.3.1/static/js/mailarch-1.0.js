@@ -26,14 +26,8 @@ var mailarch = {
         });
         
         
-        //mailarch.$msgListHeaderTable = $(".msg-list-header-table");
-        
-        //mailarch.copyColumnWidths();
         mailarch.cacheDom();
-        
-        //mailarch.setHeaderWidths();
         mailarch.bindEvents();
-        //mailarch.initButtons();
         mailarch.progressiveFeatures();
         mailarch.$msgList.focus();
         mailarch.selectInitialMessage();
@@ -76,8 +70,6 @@ var mailarch = {
 
     bindEvents: function() {
         mailarch.$clearSort.on('click', mailarch.resetSort);
-        //mailarch.$exportButton.on('click', mailarch.showExportMenu);
-        //mailarch.$exportOptions.on('blur', mailarch.hideExportMenu);
         mailarch.$filterPopups.on('blur', mailarch.closeFilterPopup);
         mailarch.$filterOptions.on('change', mailarch.applyFilter);
         mailarch.$fromFilterClear.on('click', mailarch.clearFromFilter);
@@ -91,7 +83,6 @@ var mailarch = {
         mailarch.$msgTable.on('dblclick','tr', mailarch.gotoMessage);
         mailarch.$searchForm.on('submit', mailarch.submitSearch);
         mailarch.$sortButtons.on('click', mailarch.performSort);
-        mailarch.$window.on('resize', mailarch.setHeaderWidths);
     },
     
     // SECONDARY FUNCTIONS ===================================
@@ -174,12 +165,6 @@ var mailarch = {
         mailarch.urlParams['index'] = hash;
         mailarch.doSearch();
     },
-    
-    hideExportMenu: function() {
-        var myList = $(this)
-        window.setTimeout(function() { $(myList).hide(); },500);
-        //$(this).hide();   # need to use timeout or element hides before control triggered
-    },
 
     infiniteScroll: function() {
         // BOTTOM OF SCROLL
@@ -238,18 +223,7 @@ var mailarch = {
             });
         }
     },
-    
-    initButtons: function() {
-        mailarch.$searchButton.button();
-        mailarch.$exportButton.button({
-            icons: {
-                secondary: "ui-icon-triangle-1-s"
-            }
-        });
-        mailarch.$groupButton.button();
-        mailarch.$sortButtons.button();
-    },
-    
+
     initFilters: function() {
         // put checked items up top
         $($('li:has(:checked)').get().reverse()).each(function() {
@@ -296,11 +270,6 @@ var mailarch = {
                 icon.removeClass().addClass("glyphicon glyphicon-sort-by-attributes sort-active");
                 //icon = "ui-icon-triangle-1-n";
             }
-            //elem.button({
-            //    icons: {
-            //        secondary: icon
-            //    }
-            //});
         }
     },
     
@@ -471,37 +440,6 @@ var mailarch = {
         mailarch.loadMessage($(this));
     },
     
-    setHeaderWidths: function() {
-        // synchronize the message list header table with the scrollable content table
-        mailarch.$msgListHeaderTable.width(mailarch.$msgTable.width());
-        if(mailarch.$msgTable.find("tr:first td").length != 1) {
-            mailarch.$msgListHeaderTable.find("tr th").each(function (i){
-                $(this).width($(mailarch.$msgTable.find("tr:first td")[i]).width() + 10);
-            });
-        }
-        // stretch query box to fill toolbar
-        // var w = mailarch.$content.width() - mailarch.$browseHeader.width() - 500;
-        // mailarch.$q.width(w);
-    },
-    
-    copyColumnWidths: function() {
-        // Change the selector if needed
-        var $table = mailarch.$msgTable,
-            $bodyCells = $table.find('tbody tr:first').children(),
-            colWidth;
-
-        // Get the tbody columns width array
-        colWidth = $bodyCells.map(function() {
-            return $(this).width();
-        }).get();
-
-        console.log(colWidth.toString());
-        // Set the width of thead columns
-        mailarch.$msgListHeaderTable.find('thead tr').find('a').each(function(i, v) {
-            $(v).width(colWidth[i]);
-        });
-    },
-    
     setLastItem: function() {
         var offset = mailarch.$msgList.data('queryset-offset');
         mailarch.lastItem = mailarch.$msgTable.find('tr').length + offset;
@@ -512,11 +450,6 @@ var mailarch = {
         mailarch.$listPane.css("height",top-3);
         mailarch.$viewPane.css("top",top+3);
         mailarch.$splitterPane.css("top",top);
-    },
-    
-    showExportMenu: function(event) {
-        event.preventDefault();
-        $(this).next('ul').show().focus();
     },
     
     showFilterPopup: function(event) {

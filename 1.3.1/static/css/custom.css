@@ -67,6 +67,10 @@ ul.messages li {
     border: 0 none black;
 }
 
+div:focus {
+    outline: 0;
+}
+
 /* ==========================================================================
    Header
    ========================================================================== */
@@ -278,6 +282,7 @@ ul.browse_list li {
     float: left;
     height: calc(100vh - 44px);
     padding-left: 20px;
+    padding-top: 25px;
     width: 250px;
 }
 
@@ -329,7 +334,7 @@ nav.navbar {
 }
 
 .navbar-form #id_q {
-    width: calc(100vw - 780px);
+    width: calc(100vw - 720px);
 }
 
 .navbar-collapse.in .navbar-form #id_q {

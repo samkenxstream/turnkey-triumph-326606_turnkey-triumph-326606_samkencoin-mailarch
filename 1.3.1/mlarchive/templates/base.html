@@ -7,8 +7,8 @@
     <title>{% block title %}{% endblock %}</title>
 
     <!-- <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css"> -->
-    <link href="http://jquery-ui-bootstrap.github.io/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
-
+    <!-- <link href="http://jquery-ui-bootstrap.github.io/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet"/> -->
+    {% block prestyle %}{% endblock %}
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap3/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap3/css/bootstrap-theme.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/css/selectize.css" type="text/css">
@@ -89,7 +89,7 @@
     <!-- <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui-1.10.3.custom.min.js"></script> -->
     <script src="{{ STATIC_URL }}bootstrap3/js/bootstrap.js"></script>
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script> -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script> -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.json-2.3.min.js"></script>
     <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script> -->
     {% block js %}{% endblock %}
