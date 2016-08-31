@@ -8,27 +8,42 @@ query string based on the contents of the various advanced search form widgets.
 
 var advancedSearch = {
 
+    // PRIMARY FUNCTIONS =====================================
+    
     init : function() {
-        // get elements
-        advancedSearch.removeButtons = $('.btn-remove');
-        advancedSearch.addLinks = $('.addChunk');
-        advancedSearch.qdr = $('#id_qdr');
-        
-        // bind events
-        $('#rules-form').find('input').first().focus()
-        //$('input.operand').bind('change keyup',advancedSearch.buildQuery);
-        $('select.parameter').change(advancedSearch.buildQuery);
-        $('select.qualifier').change(advancedSearch.handleQualifier);
-        advancedSearch.removeButtons.click(advancedSearch.removeChunk);
-        advancedSearch.addLinks.click(advancedSearch.addChunk);
-        advancedSearch.qdr.change(advancedSearch.qdrChange);
-
-        // init
-        $("#id_email_list").selectize();
+        advancedSearch.cacheDom();
+        advancedSearch.bindEvents();
+        advancedSearch.$emailList.selectize();
         if(document.location.search.length) {
             advancedSearch.handleReturn();
         }
     },
+    
+    cacheDom : function() {
+        advancedSearch.$removeButtons = $('.btn-remove');
+        advancedSearch.$addLinks = $('.addChunk');
+        advancedSearch.$qdr = $('#id_qdr');
+        advancedSearch.$rulesForm = $('#rules-form');
+        advancedSearch.$parameters = $('select.parameter');
+        advancedSearch.$qualifiers = $('select.qualifier');
+        advancedSearch.$operands = $('input.operand');
+        advancedSearch.$dateFields = $('.date-field');
+        advancedSearch.$startDate = $('#id_start_date');
+        advancedSearch.$endDate = $('#id_end_date');
+        advancedSearch.$emailList = $('#id_email_list');
+    },
+    
+    bindEvents : function() {
+        advancedSearch.$rulesForm.find('input').first().focus()
+        advancedSearch.$operands.bind('change keyup',advancedSearch.buildQuery);
+        advancedSearch.$parameters.change(advancedSearch.buildQuery);
+        advancedSearch.$qualifiers.change(advancedSearch.handleQualifier);
+        advancedSearch.$removeButtons.click(advancedSearch.removeChunk);
+        advancedSearch.$addLinks.click(advancedSearch.addChunk);
+        advancedSearch.$qdr.change(advancedSearch.qdrChange);
+    },
+    
+    // SECONDARY FUNCTIONS ====================================
     
     addChunk : function() {
         var chunks = $(this).siblings('div');
@@ -40,7 +55,7 @@ var advancedSearch = {
         
     buildQuery : function(ev) {
         var query_string='';
-        var op_value=$('#id_operator').val();
+        // var op_value=$('#id_operator').val();
 
         // regular query fields'
         var operands=new Array();
@@ -90,7 +105,7 @@ var advancedSearch = {
         });
 
         advancedSearch.buildQuery();
-        $('#id_qdr').trigger('change');
+        advancedSearch.$qdr.trigger('change');
     },
     
     handleQualifier : function(ev) {
@@ -136,12 +151,12 @@ var advancedSearch = {
     },
     
     qdrChange : function() {
-        if($(this).val()=="c") {
-            $(".date-field").show();
+        if($(this).val()=='c') {
+            advancedSearch.$dateFields.show();
         } else {
-            $("#id_start_date").val("");
-            $("#id_end_date").val("");
-            $(".date-field").hide();
+            advancedSearch.$startDate.val('');
+            advancedSearch.$endDate.val('');
+            advancedSearch.$dateFields.hide();
         }
     },
 

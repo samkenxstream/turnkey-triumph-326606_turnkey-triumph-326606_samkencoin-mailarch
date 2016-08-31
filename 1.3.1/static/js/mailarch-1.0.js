@@ -85,7 +85,7 @@ var mailarch = {
         mailarch.$sortButtons.on('click', mailarch.performSort);
     },
     
-    // SECONDARY FUNCTIONS ===================================
+    // SECONDARY FUNCTIONS ====================================
     
     applyFilter: function() {
         var values = [];

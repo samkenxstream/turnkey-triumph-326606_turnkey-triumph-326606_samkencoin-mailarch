@@ -55,12 +55,14 @@ ul.messages li {
 /* ==========================================================================
    Site Wide
    ========================================================================== */
+/*
 .section h2, .section h3 {
     background: lightgrey;
     color: darkgrey;
     padding: 4px 15px;
     text-align: center;
 }
+*/
 
 #msg-payload pre {
     background-color: white;
@@ -123,9 +125,9 @@ div:focus {
 }
 
 @media (max-width: 767px) {
-.login-user {
-    display: none;
-}
+    .login-user {
+        display: none;
+    }
 }
 
 /* ==========================================================================
@@ -163,7 +165,7 @@ div:focus {
    ========================================================================== */
 #search-wrapper {
     margin: 0 auto;
-    width: 480px;
+    width: 680px;
 }
 
 #search-container {
@@ -173,19 +175,19 @@ div:focus {
 }
 
 @media (max-width: 767px) {
-#header-text {
-    display: none;
-}
+    #header-text {
+        display: none;
+    }
 
-#search-wrapper {
-    width: 100%;
-}
+    #search-wrapper {
+        width: 100%;
+    }
 
-#search-container {
-    margin-top: 30px;
-    padding: 0 10% 10px;
-    width: 100%
-}
+    #search-container {
+        margin-top: 30px;
+        padding: 0 10% 10px;
+        width: 100%
+    }
 }
 
 /* ==========================================================================
@@ -193,12 +195,18 @@ div:focus {
    ========================================================================== */
 #browse-top {
     margin-top: 30px;
-    padding-left: 15px;
+    /* padding-left: 15px; */
 }
 
 .browse_section {
     margin: 0 auto;
     clear: both;
+}
+
+#browse-page h3 {
+    padding: 4px 15px;
+    text-align: center;
+    border-bottom: 1px solid #D6D6D6;
 }
 
 ul.browse_list {
@@ -247,9 +255,22 @@ ul.browse_list li {
     display: inline-block;
 }
 
+@media (min-width: 768px) {
+    #rules-form .operand {
+        width: 325px;
+    }
+}
+
 /* ==========================================================================
    Admin
    ========================================================================== */
+#admin-page h3 {
+    background-image: linear-gradient(to bottom, #5392b1 0%, #417690 100%);
+    background-repeat: repeat-x;
+    color: white;
+    text-align: center;
+}
+
 #admin-top {
     margin-top: 30px;
 }
@@ -330,7 +351,7 @@ ul.browse_list li {
 }
 
 nav.navbar {
-    margin-top: 10px;
+    margin: 10px 0;
 }
 
 .navbar-form #id_q {
@@ -378,8 +399,7 @@ nav.navbar {
 }
 
 #msg-list-controls {
-    border-top: 1px solid rgb(238, 238, 238);
-    border-bottom: 1px solid rgb(238, 238, 238);
+    border-top: 1px solid #D6D6D6;
     padding: 8px 1em 8px 1em;
 }
 
@@ -389,7 +409,7 @@ table.msg-table > thead > tr > th {
 }
 
 table.msg-table th:hover {
-    background-color: rgb(238,238,238)
+    background-color: rgb(238,238,238);
 }
 
 table.msg-table th a {
@@ -425,11 +445,12 @@ table.floatThead-table {
 }
 
 #list-pane {
-    position: absolute;
+    border: 1px solid #D6D6D6;
+    height: 200px;
     left: 0;
+    position: absolute;
     right: 0;
     top: 0;
-    height: 200px;
 }
 
 .row-selected {
@@ -455,14 +476,15 @@ table.floatThead-table {
 
 #view-pane {
     /* height: calc((100vh - 106px)/2); */
-    border-top: 1px solid rgb(238, 238, 238);
-    position: absolute;
-    left: 0;
-    right: 0;
+    border: 1px solid #D6D6D6;
     bottom: 0;
+    left: 0;
+    overflow-y: scroll;
+    padding: 1em;
+    position: absolute;
+    right: 0;
     top: 205px;
     /* height: calc(100vh - 344px); */
-    overflow-y: scroll;
 }
 
 .msg-header {
@@ -475,6 +497,16 @@ table.floatThead-table {
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
+}
+
+#msg-body h3 {
+    font-size: 18px;
+    font-weight: normal;
+    margin: 2px 0;
+}
+
+#msg-body pre {
+    padding: 0;
 }
 
 #msg-link {

@@ -2,15 +2,9 @@
 
 {% load archive_extras widget_tweaks %}
 
-
 {% block title %}Mail Archive{% endblock %}
 
-{% block prestyle %}
-<link href="http://jquery-ui-bootstrap.github.io/jquery-ui-bootstrap/css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet"/>
-{% endblock %}
-
 {% block content %}
-
 
     <div id="msg-container">
         <div id="sidebar">
@@ -145,10 +139,9 @@
 {% endblock %}
 
 {% block js %}
-<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.query.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.floatThead.js"></script>
-<!-- <script type="text/javascript" src="{{ STATIC_URL }}js/search.js"></script> -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/mailarch-1.0.js"></script>
 {% endblock %}

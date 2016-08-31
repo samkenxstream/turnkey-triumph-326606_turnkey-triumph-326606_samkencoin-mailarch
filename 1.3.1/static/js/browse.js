@@ -1,6 +1,7 @@
 /* browse.js */
 
 $(function() {
-    $('#id_list').selectize();
-    //$('#id_list_name').val('').focus();
+    var $select = $('#id_list').selectize();
+    // var selectize = $select[0].selectize;
+    // selectize.focus();
 });

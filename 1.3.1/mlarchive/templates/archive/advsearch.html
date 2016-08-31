@@ -4,7 +4,8 @@
 {% block title %}Mail Archive{% endblock %}
 
 {% block extrastyle %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/css/bootstrap-datepicker.css">
+<link rel="stylesheet" href="{{ STATIC_URL }}selectize/css/selectize.bootstrap3.css" type="text/css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-datepicker.min.css" type="text/css">
 {% endblock %}
 
 {% block header %}{{ block.super }} - Advanced Search{% endblock %}
@@ -68,13 +69,13 @@
       
   </div> <!-- advanced-search-->
 </div>
-</div> <!-- container-fluid -->
+</div> <!-- container -->
 
 {% endblock %}
 
 {% block js %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/js/standalone/selectize.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.1/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}selectize/js/standalone/selectize.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.query.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/search_advanced.js"></script>
 {% endblock %}
