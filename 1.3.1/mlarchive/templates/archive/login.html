@@ -1,14 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap3 %}
 
-{% block extrahead %}
-<script type="text/javascript">
-$(function() {
-    $('#id_username').focus();
-});
-</script>
-{% endblock %} 
-
 {% block title %}Mail Archive{% endblock %}
 
 {% block content %}
@@ -24,4 +16,10 @@ $(function() {
 
 {% endblock %}
 
-
+{% block js %}
+<script type="text/javascript">
+$(function() {
+    $('#id_username').focus();
+});
+</script>
+{% endblock %}

@@ -32,7 +32,7 @@
         </fieldset>
 
         <fieldset class="term-set">
-        <h4>but do not include:</h4>
+        <h4>Do not Include:</h4>
         {% for form in not_formset.forms %}
             <div id="not_chunk_{{ forloop.counter0 }}" class="chunk not_chunk form-inline">
             {% if form.non_field_errors %}
@@ -50,11 +50,11 @@
 
       <form id="advanced-search-form" class="advanced" action="../search" method="get">
         <fieldset>
-        <span class="label">filter results by:</span>
-            {% bootstrap_field form.qdr %}
+        <h4>Filter Results By:</h4>
+            {% bootstrap_field form.qdr show_label=False %}
             {% bootstrap_field form.start_date form_group_class="form-group date-field" %}
             {% bootstrap_field form.end_date form_group_class="form-group date-field" %}
-            {% bootstrap_field form.email_list show_help=False %}
+            {% bootstrap_field form.email_list show_help=False show_label=False %}
         </fieldset>
 
         <button class="btn btn-default" type="submit">Search</button>

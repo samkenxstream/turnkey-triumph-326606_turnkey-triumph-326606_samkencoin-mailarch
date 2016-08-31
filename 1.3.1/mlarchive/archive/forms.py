@@ -226,7 +226,8 @@ class AdvancedSearchForm(FacetedSearchForm):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request')
         super(self.__class__, self).__init__(*args, **kwargs)
-
+        self.fields["email_list"].widget.attrs["placeholder"] = "List names"
+        
     def get_facets(self, sqs):
         """Get facets for the SearchQuerySet
 
