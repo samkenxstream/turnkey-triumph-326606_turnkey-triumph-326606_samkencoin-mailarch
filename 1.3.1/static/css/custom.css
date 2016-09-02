@@ -19,8 +19,8 @@ ul.messages {
 ul.messages li {
     font-size: 12px;
     display: block;
-    /* padding: 4px 5px 4px 25px; */
-    padding: 9px 5px 10px 25px;
+    padding: 4px 5px 4px 25px;
+    /* padding: 9px 5px 10px 25px; */
     margin: 0 0 3px 0;
     border-bottom: 1px solid #ddd;
     color: #666;
@@ -37,32 +37,24 @@ ul.messages li {
 }
 
 .info {
-    background: #ffc url(../img/admin/icon_success.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_success.gif) 5px .3em no-repeat;
 }
 
 .success {
-    background: #ffc url(../img/admin/icon_success.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_success.gif) 5px .3em no-repeat;
 }
 
 .warning {
-    background: #ffc url(../img/admin/icon_alert.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_alert.gif) 5px .3em no-repeat;
 }
 
 .error {
-    background: #ffc url(../img/admin/icon_error.gif) 5px .3em no-repeat;
+    background: #ffc url(../admin/img/icon_error.gif) 5px .3em no-repeat;
 }
 
 /* ==========================================================================
    Site Wide
    ========================================================================== */
-/*
-.section h2, .section h3 {
-    background: lightgrey;
-    color: darkgrey;
-    padding: 4px 15px;
-    text-align: center;
-}
-*/
 
 #msg-payload pre {
     background-color: white;
@@ -303,13 +295,22 @@ ul.browse_list li {
     float: left;
     height: calc(100vh - 44px);
     padding-left: 20px;
-    padding-top: 25px;
+    padding-top: 10px;
     width: 250px;
 }
 
 #sidebar ul {
     padding-left: 0;
     margin-bottom: 18px;
+}
+
+a.selected {
+    color: #23527c;
+    text-decoration: underline;
+}
+
+#search-filters h4 {
+    margin-top: 25px;
 }
 
 .filter-options li {
@@ -330,7 +331,10 @@ ul.browse_list li {
     line-height: 17px;
     padding-bottom: 5px;
     padding-top: 5px;
-    z-index: 103;
+    position: absolute;
+    left: 60px;
+    top: 130px;
+    z-index: 1002;
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 450px;
@@ -379,7 +383,7 @@ nav.navbar {
 
 #msg-panes {
     position: relative;
-    height: calc(100vh - 144px);
+    height: calc(100vh - 124px);
 }
 
 #msg-panes .navbar {
@@ -388,7 +392,7 @@ nav.navbar {
 }
 
 .msg-list {
-    /* height: 200px; */
+    cursor: pointer;
     height: 100%;
     overflow: auto;
     position: relative;
@@ -475,7 +479,6 @@ table.floatThead-table {
 }
 
 #view-pane {
-    /* height: calc((100vh - 106px)/2); */
     border: 1px solid #D6D6D6;
     bottom: 0;
     left: 0;
@@ -484,11 +487,11 @@ table.floatThead-table {
     position: absolute;
     right: 0;
     top: 205px;
-    /* height: calc(100vh - 344px); */
 }
 
 .msg-header {
     color: #808080;
+    margin: 0 0 20px;
 }
 
 .wordwrap {
@@ -555,6 +558,9 @@ table.floatThead-table {
 /* ==========================================================================
    Message Detail
    ========================================================================== */
+#msg-detail {
+    padding-top: 15px;
+}
 
 #msg-aside ul {
     margin: 0;
@@ -581,6 +587,15 @@ table.floatThead-table {
 #msg-nav ul li {
     display: inline;
     margin: 0 2em 0 2em;
+}
+
+.attachment-list {
+    margin: 2em 0;
+    padding-left: 0;
+}
+
+.attachment-list li {
+    list-style: none;
 }
 
 /* ==========================================================================

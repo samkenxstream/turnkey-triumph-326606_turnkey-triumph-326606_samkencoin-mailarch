@@ -16,11 +16,11 @@
           {{ part|safe }}
       {% endfor %}
     </div>
-    <div id="msg-attachments">
+    <div>
       {% if msg.attachment_set.all %}
-        <ul id="attachments-list">
+        <ul class="attachment-list">
         {% for attachment in msg.attachment_set.all %}
-          <li><span id="attachments-label">Attachment: </span><a href="{{ attachment.get_absolute_url }}">{{ attachment.name }}</a></li>
+          <li><h3><span class="label label-default">Attachment:</span><a href="{{ attachment.get_absolute_url }}"> {{ attachment.name }}</a></h3></li>
         {% endfor %}
         </ul>
       {% endif %}
