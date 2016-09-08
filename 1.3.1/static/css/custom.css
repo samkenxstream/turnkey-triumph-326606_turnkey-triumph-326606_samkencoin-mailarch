@@ -392,14 +392,11 @@ nav.navbar {
 }
 
 .msg-list {
+    border-top: 1px solid #D6D6D6;
     cursor: pointer;
-    height: 100%;
+    height: calc(100% - 73px);
     overflow: auto;
     position: relative;
-}
-
-.floatThead-wrapper {
-    height: calc(100% - 37px);
 }
 
 #msg-list-controls {
@@ -408,8 +405,7 @@ nav.navbar {
 }
 
 table.msg-table > thead > tr > th {
-    padding: 0;
-    padding-left: 8px;
+    padding: 0 0 0 8px;
 }
 
 table.msg-table th:hover {
@@ -440,12 +436,6 @@ table.msg-list-header-table th a.btn {
 
 .glyphicon.sort-active {
     color: black;
-}
-
-table.floatThead-table {
-    border-top: none;
-    border-bottom: none;
-    background-color: #FFF;
 }
 
 #list-pane {
@@ -545,13 +535,113 @@ table.floatThead-table {
         display: none;
     }
     
-    #msg-panes {
-        /* height: 100%; */
-    }
-    
     #list-pane {
         height: 100%;
         bottom: 0;
+    }
+}
+
+/* Result Table Responsive Styling
+   ========================================================================== */
+.date-col, .list-col {
+    display: inline;
+}
+
+.list-col {
+    float: right;
+}
+
+.xtr {
+    border: 1px solid #D6D6D6;
+    margin: 8px 4px;
+    padding: 4px 8px;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12);
+}
+
+.header {
+    width: 23.5%;
+    display: inline-block;
+}
+
+.header a {
+    color: black;
+    padding: 8px 8px 8px 0;
+    display: inline-block;
+    width: 100%;
+}
+
+.header:first-child {
+    margin-left: 4px;
+}
+
+@media (min-width: 768px)
+{
+    .xtable {
+        display: table;
+    }
+    
+    .xthead {
+        display: table-header-group;
+    }
+    
+    .xthead .xtd {
+    }
+    
+    .xtd {
+        border-top: 1px solid #dddddd;
+        display: table-cell;
+        padding: 8px;
+        line-height: 1.42857143;
+        vertical-align: top;
+    }
+    
+    .xtbody {
+        display: table-row-group;
+    }
+    
+    .xtr {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        display: table-row;
+    }
+    
+    .header a {
+        color: black;
+        padding: 8px 8px 8px 0;
+        display: inline-block;
+        width: 100%;
+    }
+    
+    .header {
+        padding: 0 0 0 8px;
+        border-top: 0;
+        font-weight: bold;
+    }
+
+    .header:hover {
+        background-color: rgb(238,238,238);
+    }
+
+    .header a:hover {
+        text-decoration: none;
+    }
+}
+
+@media (max-width: 767px)
+{
+    #msg-panes {
+        height: 100%;
+    }
+    
+    #list-pane {
+        border: 0;
+        position: static;
+    }
+    
+    #msg-components {
+        padding: 0 10px;
     }
 }
 

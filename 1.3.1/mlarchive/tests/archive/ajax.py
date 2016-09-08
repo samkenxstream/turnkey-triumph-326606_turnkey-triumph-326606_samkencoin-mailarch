@@ -60,7 +60,7 @@ def test_ajax_get_messages(client,messages):
     response = client.get(url)
     assert response.status_code == 200
     q = PyQuery(response.content)
-    assert len(q('tr')) > 1
+    assert len(q('.xtr')) > 1
 
     # test end of results
     url = '%s/?queryid=%s&lastitem=40' % (reverse('ajax_messages'), id)

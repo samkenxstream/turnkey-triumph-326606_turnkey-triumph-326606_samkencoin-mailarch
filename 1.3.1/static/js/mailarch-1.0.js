@@ -18,14 +18,7 @@ var mailarch = {
     // PRIMARY FUNCTIONS =====================================
     
     init: function() {
-        var $table = $('table.msg-table');
-        $table.floatThead({
-            scrollContainer: function($table){
-                return $table.closest('.wrapper');
-            }
-        });
-        
-        
+        mailarch.setHeaderWidths();
         mailarch.cacheDom();
         mailarch.bindEvents();
         mailarch.progressiveFeatures();
@@ -48,7 +41,8 @@ var mailarch = {
         mailarch.$filterOptions = $('input.facetchk[type=checkbox]');
         mailarch.$fromFilterClear = $('#from-filter-clear');
         mailarch.$fromFilterContainer = $('#from-filter-container');
-        mailarch.$groupButton = $('#group-button');
+        //mailarch.$groupButton = $('#group-button');
+        mailarch.$threadLink = $('#gbt-link');
         mailarch.$listFilterClear = $('#list-filter-clear');
         mailarch.$listFilterContainer = $('#list-filter-container');
         mailarch.$listPane = $("#list-pane");
@@ -56,8 +50,8 @@ var mailarch = {
         mailarch.$moreLinks = $('.more-link');
         mailarch.$msgList = $('.msg-list');
         mailarch.$msgTable = $('.msg-table');
-        mailarch.$msgTableTbody = this.$msgTable.find('tbody');
-        mailarch.$msgTableRows = this.$msgTable.find('tr');
+        mailarch.$msgTableTbody = this.$msgTable.find('.xtbody');
+        mailarch.$msgTableRows = this.$msgTable.find('.xtr');
         mailarch.$pageLinks = $('#page-links');
         mailarch.$q = $('#id_q');
         mailarch.$searchButton = $('#search-button');
@@ -73,16 +67,21 @@ var mailarch = {
         mailarch.$filterPopups.on('blur', mailarch.closeFilterPopup);
         mailarch.$filterOptions.on('change', mailarch.applyFilter);
         mailarch.$fromFilterClear.on('click', mailarch.clearFromFilter);
-        mailarch.$groupButton.on('click', mailarch.groupByThread);
+        //mailarch.$groupButton.on('click', mailarch.groupByThread);
+        mailarch.$threadLink.on('click', mailarch.groupByThread);
         mailarch.$listFilterClear.on('click', mailarch.clearListFilter);
         mailarch.$modifySearch.on('click', mailarch.removeIndexParam);
         mailarch.$moreLinks.on('click', mailarch.showFilterPopup);
         mailarch.$msgList.on('keydown', mailarch.messageNav);
         mailarch.$msgList.on('scroll', mailarch.infiniteScroll);
-        mailarch.$msgTable.on('click','tr', mailarch.selectRow);
-        mailarch.$msgTable.on('dblclick','tr', mailarch.gotoMessage);
+        mailarch.$msgTable.on('click','.xtr', mailarch.selectRow);
+        mailarch.$msgTable.on('dblclick','.xtr', mailarch.gotoMessage);
         mailarch.$searchForm.on('submit', mailarch.submitSearch);
         mailarch.$sortButtons.on('click', mailarch.performSort);
+        mailarch.$window.resize(mailarch.handleResize);
+        if(mailarch.isSmallViewport()) {
+            mailarch.$window.on('scroll', mailarch.infiniteScroll);
+        }
     },
     
     // SECONDARY FUNCTIONS ====================================
@@ -147,25 +146,36 @@ var mailarch = {
     },
     
     gotoMessage: function() {
-        var url = $(this).find("td:nth-child(6)").html();
+        var url = $(this).find(".xtd:nth-child(6)").html();
         window.open(url);
     },
     
-    groupByThread: function() {
-        // event.preventDefault();
+    groupByThread: function(event) {
+        event.preventDefault();
         if(mailarch.urlParams.hasOwnProperty('gbt')) {
             delete mailarch.urlParams.gbt;
         } else {
             mailarch.urlParams['gbt'] = '1';
         }
         // add index to URL to preserve context
-        var path = mailarch.$msgTable.find('tr.row-selected td:nth-child(6)').text();
+        var path = mailarch.$msgTable.find('.xtr.row-selected .xtd:nth-child(6)').text();
         var parts = path.split('/');
         var hash = parts[parts.length - 1];
         mailarch.urlParams['index'] = hash;
         mailarch.doSearch();
     },
 
+    handleResize: function() {
+        if(mailarch.isSmallViewport()) {
+            $('.header').removeAttr('style');
+            //$('.header').attr('style', function(i, style){
+            //    return style.replace(/width[^;]+;?/g, '');
+            //});
+        } else {
+            mailarch.setHeaderWidths();
+        }
+    },
+    
     infiniteScroll: function() {
         // BOTTOM OF SCROLL
         if($(this).scrollTop() + $(this).innerHeight() > $(this)[0].scrollHeight - 2) {
@@ -275,9 +285,9 @@ var mailarch = {
     
     initSplitter: function() {
         // no splitter for mobile
-        if ($(window).width() <= 768) {
+        if (mailarch.isSmallViewport()) {
             return true;
-        } 
+        }
         mailarch.$splitterPane.draggable({
             axis:"y",
             //containment:"parent",
@@ -303,9 +313,17 @@ var mailarch = {
         }
     },
     
+    isSmallViewport: function() {
+        if ($(window).width() <= 768) {
+            return true;
+        } else {
+            return false;
+        }
+    },
+    
     // given the row of the msg list, load the message text in the mag view pane
     loadMessage: function(row) {
-        var msgId = row.find("td:last").html();
+        var msgId = row.find(".xtd:last").html();
         if(/^\d+$/.test(msgId)){
             mailarch.$viewPane.load('/arch/ajax/msg/?id=' + msgId, function() {
                 // NTOE: don't use cached DOM objects here because these change
@@ -422,13 +440,16 @@ var mailarch = {
     
     // auto select first item in result list
     selectInitialMessage: function() {
+        if (mailarch.isSmallViewport()) {
+            return true;
+        }
         var offset = mailarch.$msgList.data('selected-offset');
         if(offset > 0){
-            var row = mailarch.$msgTable.find('tr:eq(' + offset + ')');
-            var height = mailarch.$msgTable.find('tr:eq(0)').height();
+            var row = mailarch.$msgTable.find('.xtr:eq(' + offset + ')');
+            var height = mailarch.$msgTable.find('.xtr:eq(0)').height();
             mailarch.$msgList.scrollTop((offset-1)*height);
         } else {
-            var row = mailarch.$msgTable.find('tbody tr:first');
+            var row = mailarch.$msgTable.find('.xtbody .xtr:first');
         }
         row.addClass('row-selected');
         mailarch.loadMessage(row);
@@ -440,9 +461,20 @@ var mailarch = {
         mailarch.loadMessage($(this));
     },
     
+    setHeaderWidths: function() {
+        // synchronize the message list header table with the scrollable content table
+        // $("#msg-list-header-table").width($(".msg-table").width());
+        if (mailarch.isSmallViewport()) {
+            return true;
+        }
+        $(".header").each(function (i){
+            $(this).width($($(".msg-table .xtr:first .xtd")[i]).width() + 16);
+        });
+    },
+    
     setLastItem: function() {
         var offset = mailarch.$msgList.data('queryset-offset');
-        mailarch.lastItem = mailarch.$msgTable.find('tr').length + offset;
+        mailarch.lastItem = mailarch.$msgTable.find('.xtr').length + offset;
     },
     
     setSplitter: function(top) {
@@ -471,5 +503,10 @@ var mailarch = {
 $(function() {
     mailarch.init();
     //alert("Viewport: " + $( window ).height() + "Document: " + $( document ).height());
-
 });
+
+(function($) {
+    $.fn.hasScrollBar = function() {
+        return this.get(0).scrollHeight > this.height();
+    }
+})(jQuery);

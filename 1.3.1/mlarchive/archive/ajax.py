@@ -65,7 +65,7 @@ def ajax_messages(request):
     if not results:
         return HttpResponse(status=204)     # No Content
 
-    return render_to_response('includes/results_rows.html', {
+    return render_to_response('includes/results_divs.html', {
         'results': results},
         RequestContext(request, {}),
     )

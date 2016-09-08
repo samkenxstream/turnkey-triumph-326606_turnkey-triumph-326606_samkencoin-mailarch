@@ -76,7 +76,7 @@
                             {% endif %}
                             <!-- <li><a id="clear-sort" href="#">Clear Sort</a></li> -->
                             <li{% if not thread_sorted %} class="active"{% endif %}><a href="{{ view_date_url }}">Date</a></li>
-                            <li{% if thread_sorted %} class="active"{% endif %}><a href="{{ view_thread_url }}">Thread</a></li>
+                            <li{% if thread_sorted %} class="active"{% endif %}><a id="gbt-link" href="{{ view_thread_url }}">Thread</a></li>
                         </ul>
                         
                         <ul class="nav navbar-nav navbar-right">
@@ -105,24 +105,19 @@
     
             
             <div id="msg-panes">
-                <div id="list-pane">    
+                <div id="list-pane">
+
+                    <div class="xtd header"><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></div>
+                    <div class="xtd header"><a id="sort-button-frm" class="unsorted sortbutton" href="#">From<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></div>
+                    <div class="xtd header"><a id="sort-button-date" class="unsorted sortbutton" href="#">Date<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></div>
+                    <div class="xtd header"><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></div>
+
                     <div class="msg-list wrapper" tabindex="-1" data-queryid="{{ queryid }}" data-queryset-offset="{{ queryset_offset }}" data-selected-offset="{{ selected_offset }}">
-                        <table class="table table-condensed msg-table">
-                            <thead>
-                                <tr>
-                                    <th><a id="sort-button-subject" class="unsorted sortbutton" href="#">Subject<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                    <th><a id="sort-button-frm" class="unsorted sortbutton" href="#">From<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                    <th><a id="sort-button-date" class="unsorted sortbutton" href="#">Date<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                    <th><a id="sort-button-email_list" class="unsorted sortbutton" href="#">List<span class="glyphicon glyphicon-sort-by-attributes" aria-hidden="true"></span></a></th>
-                                    <th class="hidden"></th>
-                                    <th class="hidden"></th>
-                                    <th class="hidden"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% include "includes/results_rows.html" %}
-                            </tbody>
-                        </table>
+                        <div class="table table-condensed msg-table xtable">
+                            <div class="xtbody">
+                                {% include "includes/results_divs.html" %}
+                            </div>
+                        </div> <!-- msg-table -->
                     </div> <!-- msg-list -->
 
                     <div id="msg-list-controls">
@@ -139,9 +134,9 @@
 {% endblock %}
 
 {% block js %}
+
 <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui/jquery-ui.min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.query.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.floatThead.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/mailarch-1.0.js"></script>
 {% endblock %}
