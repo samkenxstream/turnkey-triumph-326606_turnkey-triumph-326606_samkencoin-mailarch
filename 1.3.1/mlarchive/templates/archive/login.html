@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}Mail Archive{% endblock %}
+
+{% block content %}
+
+<div class="corral">
+  <div id="login-container">
+    <form action="." method="post">{% csrf_token %}
+        {% bootstrap_form form show_label=False %}
+        <button id="login-button" type="submit" value="Login" class="btn btn-primary">Log In</button>
+    </form>
+  </div>  <!-- login-container -->
+</div> <!-- .corral -->
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+$(function() {
+    $('#id_username').focus();
+});
+</script>
+{% endblock %}
