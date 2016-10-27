@@ -467,6 +467,30 @@ table.msg-list-header-table th a.btn {
     min-width: 60px;
 }
 
+.xtd.depth-1 a {
+    margin-left: 8px;
+}
+
+.xtd.depth-2 a {
+    margin-left: 16px;
+}
+
+.xtd.depth-3 a {
+    margin-left: 24px;
+}
+
+.xtd.depth-4 a {
+    margin-left: 32px;
+}
+
+.xtd.depth-5 a {
+    margin-left: 40px;
+}
+
+.xtd.depth-6 a {
+    margin-left: 48px;
+}
+
 #splitter-pane {
     position: absolute;
     left: 0;
