@@ -100,7 +100,7 @@ def test_container_walk():
 def test_container_export():
     tree = create_tree()
     for c in tree.c1.export():
-        print c, c.depth, c.order
+        print c, c.depth
     assert False
 
 

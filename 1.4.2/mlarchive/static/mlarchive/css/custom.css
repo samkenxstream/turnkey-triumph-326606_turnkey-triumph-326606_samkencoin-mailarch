@@ -467,28 +467,28 @@ table.msg-list-header-table th a.btn {
     min-width: 60px;
 }
 
-.xtd.depth-1 a {
-    margin-left: 8px;
+.xtable.thread-sorted .xtd.depth-1 a {
+    margin-left: 1em;
 }
 
-.xtd.depth-2 a {
-    margin-left: 16px;
+.xtable.thread-sorted .xtd.depth-2 a {
+    margin-left: 2em;
 }
 
-.xtd.depth-3 a {
-    margin-left: 24px;
+.xtable.thread-sorted .xtd.depth-3 a {
+    margin-left: 3em;
 }
 
-.xtd.depth-4 a {
-    margin-left: 32px;
+.xtable.thread-sorted .xtd.depth-4 a {
+    margin-left: 4em;
 }
 
-.xtd.depth-5 a {
-    margin-left: 40px;
+.xtable.thread-sorted .xtd.depth-5 a {
+    margin-left: 5em;
 }
 
-.xtd.depth-6 a {
-    margin-left: 48px;
+.xtable.thread-sorted .xtd.depth-6 a {
+    margin-left: 6em;
 }
 
 #splitter-pane {

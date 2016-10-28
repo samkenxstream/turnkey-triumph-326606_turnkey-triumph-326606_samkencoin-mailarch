@@ -13,14 +13,21 @@ def clear_threads(apps, schema_editor):
     the other threads.  This way it will be simple to tell
     which messages, if any, don't get a new thread.
     '''
+    Message = apps.get_model("archive", "Message")
     Thread = apps.get_model('archive', 'Thread')
-    thread = Thread.objects.get(pk=1)
-    if Thread.objects.count() > 500000:
-        Message.objects.all().update(thread=thread)
+    try:
+        Message.objects.all().update(thread=Thread.objects.get(pk=1))
         migrations.RunSQL('delete from archive_thread where id > 1')
-        #with connection.cursor() as cursor:
-        #    cursor.execute('delete from archive_thread where id > 1')
-        #    row = cursor.fetchone()
+    except Thread.DoesNotExist:
+        return
+
+
+def reverse_clear_threads(apps, schema_editor):
+    pass
+
+
+def reverse_compute_threads(apps, schema_editor):
+    pass
 
 
 def compute_threads(apps, schema_editor):
@@ -43,12 +50,12 @@ def compute_threads(apps, schema_editor):
                 date = branch.message.date
                 first = branch.message
             thread = Thread.objects.create(date=date, first=first)
-            for container in branch.export():
+            for order,container in enumerate(branch.export()):
                 if container.is_empty():
                     pass
                 else:
                     container.message.thread = thread
-                    container.message.thread_order = container.order
+                    container.message.thread_order = order
                     container.message.thread_depth = container.depth
                     container.message.save()
 
@@ -60,6 +67,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(clear_threads),
-        migrations.RunPython(compute_threads),
+        migrations.RunPython(clear_threads,reverse_clear_threads),
+        migrations.RunPython(compute_threads,reverse_compute_threads),
     ]

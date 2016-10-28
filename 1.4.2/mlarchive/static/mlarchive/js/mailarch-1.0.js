@@ -10,6 +10,7 @@ https://github.com/blairmitchelmore/jquery.plugins/blob/master/jquery.query.js
 var mailarch = {
 
     // VARAIBLES =============================================
+    ajaxRequestSent: false,
     lastItem: 0,
     urlParams: {},
     sortDefault: new Array(),
@@ -181,13 +182,18 @@ var mailarch = {
     infiniteScroll: function() {
         // BOTTOM OF SCROLL
         if($(this).scrollTop() + $(this).innerHeight() > $(this)[0].scrollHeight - 2) {
+            if (mailarch.ajaxRequestSent) {
+                return true;
+            }
             var queryid = mailarch.$msgList.attr('data-queryid');
             var request = $.ajax({
                 "type": "GET",
                 "url": "/arch/ajax/messages/",
                 "data": { "queryid": queryid, "lastitem": mailarch.lastItem }
             });
+            mailarch.ajaxRequestSent = true;
             request.done(function(data, testStatus, xhr) {
+                mailarch.ajaxRequestSent = false;
                 if(xhr.status == 200){
                     mailarch.$msgTableTbody.append(data);
                     mailarch.setLastItem();
@@ -196,6 +202,7 @@ var mailarch = {
                 }
             });
             request.fail(function(xhr, textStatus, errorThrown) {
+                mailarch.ajaxRequestSent = false;
                 if(xhr.status == 404){
                     // server returns a 404 when query has expired from cache
                     window.location.reload();

@@ -22,7 +22,6 @@ class Container(object):
         self.child = None
         self.next = None
         self.depth = None
-        self.order = None
 
     def __str__(self):
         if self.parent:
@@ -102,7 +101,7 @@ class Container(object):
 
     def sort_date(self):
         '''Returns the date to use for sorting.  Either the
-        date of self.message or if this is a dummy container, 
+        date of self.message or if this is a dummy container,
         the date of self.child.message
         '''
         if not self.is_empty():
@@ -123,20 +122,17 @@ class Container(object):
                 yield container
 
 
-    def export(self, depth=0, order=0):
+    def export(self, depth=0):
         '''Returns a generator that walks the tree and returns
         containers, assigning depth and order attributes
         '''
         self.depth = depth
-        self.order = order
         yield self
         if self.child:
-            order = order + 1
-            for container in self.child.export(depth=depth + 1, order=order):
+            for container in self.child.export(depth=depth + 1):
                 yield container
         if self.next:
-            order = order + 1
-            for container in self.next.export(depth=depth, order=order):
+            for container in self.next.export(depth=depth):
                 yield container
 
 
