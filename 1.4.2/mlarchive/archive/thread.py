@@ -7,7 +7,6 @@ import re
 from collections import defaultdict
 from operator import methodcaller
 
-from mlarchive.archive.models import Message
 
 CONTAINER_COUNT = 0
 DEBUG = False
@@ -245,6 +244,25 @@ def build_subject_table(root_node):
         container = container.next
 
     return subject_table
+
+
+def compute_thread(thread):
+    '''Computes the thread tree for given thread.  Updating Message.thread_depth
+    and Message.thread_order as necessary.  Called when messages are imported.
+    '''
+    queryset = thread.message_set.all().order_by('date')
+    root_node = process(queryset)
+    for branch in get_root_set(root_node):
+        for order,container in enumerate(branch.export()):
+            if container.is_empty():
+                pass
+            else:
+                message = container.message                
+                if (message.thread_order != order or 
+                        message.thread_depth != container.depth):
+                    message.thread_order = order
+                    message.thread_depth = container.depth
+                    message.save()
 
 
 def container_stats(parent, id_table):

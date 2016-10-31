@@ -395,7 +395,7 @@ def _message_remove(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Message)
 def _message_save(sender, instance, **kwargs):
-    """When messages are saved, call thread.set_first()
+    """When messages are saved, udpate thread info
     """
     if instance.date < instance.thread.date:
         instance.thread.set_first(instance)

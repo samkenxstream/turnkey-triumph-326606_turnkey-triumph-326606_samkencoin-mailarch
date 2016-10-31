@@ -3,11 +3,11 @@ import datetime
 from collections import namedtuple, defaultdict
 
 import pytest
-from factories import EmailListFactory, MessageFactory
+from factories import EmailListFactory, MessageFactory, ThreadFactory
 from mlarchive.archive.thread import (Container, process, build_container,
     count_root_set, find_root, find_root_set, subject_is_reply, 
-    gather_subjects, prune_empty_containers, sort_thread,
-    gather_siblings)
+    gather_subjects, prune_empty_containers, sort_thread, compute_thread,
+    gather_siblings, display_thread)
 from mlarchive.archive.models import Message
 
 
@@ -46,6 +46,82 @@ def create_tree():
     c6.next = c7
     c7.parent = c1
     return Tree(c1, c2, c3, c4, c5, c6, c7)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_build_container():
+    id_table = {}
+    elist = EmailListFactory.create()
+    message1 = MessageFactory.create(
+        email_list=elist,
+        msgid='001@example.com',
+        date=datetime.datetime(2016, 1, 1))
+    message2 = MessageFactory.create(
+        email_list=elist,
+        msgid='002@example.com',
+        date=datetime.datetime(2016, 1, 2),
+        references='<001@example.com>')
+    message3 = MessageFactory.create(
+        email_list=elist,
+        msgid='003@example.com',
+        date=datetime.datetime(2016, 1, 3),
+        references='<001@example.com>')
+    # simple message
+    build_container(message1, id_table, 0)
+    assert message1.msgid in id_table
+    container1 = id_table[message1.msgid]
+    assert container1.message == message1
+    assert container1.parent is None
+    assert container1.next is None
+    assert container1.child is None
+    # child of first message
+    build_container(message2, id_table, 0)
+    assert message2.msgid in id_table
+    container2 = id_table[message2.msgid]
+    assert container2.message == message2
+    assert container2.parent is container1
+    assert container1.child is container2
+    # sibling of child
+    build_container(message3, id_table, 0)
+    assert message3.msgid in id_table
+    container3 = id_table[message3.msgid]
+    assert container3.message == message3
+    assert container3.parent is container1
+    assert container1.child is container3
+    assert container3.next is container2
+
+
+
+@pytest.mark.django_db(transaction=True)
+def test_compute_thread():
+    '''Test adding a message to existing thread'''
+    elist = EmailListFactory.create()
+    thread = ThreadFactory.create()
+    message1 = MessageFactory.create(
+        email_list=elist,
+        msgid='001@example.com',
+        date=datetime.datetime(2016, 1, 1),
+        thread=thread,
+        thread_depth=0,
+        thread_order=0)
+    message2 = MessageFactory.create(
+        email_list=elist,
+        msgid='002@example.com',
+        date=datetime.datetime(2016, 1, 2),
+        thread=thread,
+        references='<001@example.com>',
+        thread_depth=0,
+        thread_order=0)
+    compute_thread(thread)
+    message2 = Message.objects.get(msgid='002@example.com')
+    assert message2.thread_order == 1
+    assert message2.thread_depth == 1
+
+
+def test_container_export():
+    tree = create_tree()
+    results = [c.depth for c in tree.c1.export()]
+    assert results == [0,1,2,1,2,1,1]
 
 
 def test_container_has_ancestor():
@@ -97,56 +173,6 @@ def test_container_walk():
                     tree.c7]
 
 
-def test_container_export():
-    tree = create_tree()
-    for c in tree.c1.export():
-        print c, c.depth
-    assert False
-
-
-@pytest.mark.django_db(transaction=True)
-def test_build_container():
-    id_table = {}
-    elist = EmailListFactory.create()
-    message1 = MessageFactory.create(
-        email_list=elist,
-        msgid='001@example.com',
-        date=datetime.datetime(2016, 1, 1))
-    message2 = MessageFactory.create(
-        email_list=elist,
-        msgid='002@example.com',
-        date=datetime.datetime(2016, 1, 2),
-        references='<001@example.com>')
-    message3 = MessageFactory.create(
-        email_list=elist,
-        msgid='003@example.com',
-        date=datetime.datetime(2016, 1, 3),
-        references='<001@example.com>')
-    # simple message
-    build_container(message1, id_table, 0)
-    assert message1.msgid in id_table
-    container1 = id_table[message1.msgid]
-    assert container1.message == message1
-    assert container1.parent is None
-    assert container1.next is None
-    assert container1.child is None
-    # child of first message
-    build_container(message2, id_table, 0)
-    assert message2.msgid in id_table
-    container2 = id_table[message2.msgid]
-    assert container2.message == message2
-    assert container2.parent is container1
-    assert container1.child is container2
-    # sibling of child
-    build_container(message3, id_table, 0)
-    assert message3.msgid in id_table
-    container3 = id_table[message3.msgid]
-    assert container3.message == message3
-    assert container3.parent is container1
-    assert container1.child is container3
-    assert container3.next is container2
-
-
 def test_count_root_set():
     tree = create_tree()
     root_node = Container()
@@ -176,6 +202,15 @@ def test_find_root_set():
     assert root_node.child.message == message1
 
 
+def test_gather_siblings():
+    tree = create_tree()
+    siblings = defaultdict(list)
+    gather_siblings(tree.c1,siblings)
+    assert siblings[tree.c1] == [tree.c2,tree.c4,tree.c6,tree.c7]
+    assert siblings[tree.c2] == [tree.c3]
+    assert siblings[tree.c4] == [tree.c5]
+
+
 @pytest.mark.django_db(transaction=True)
 def test_gather_subjects():
     id_table = {}
@@ -196,81 +231,6 @@ def test_gather_subjects():
     gather_subjects(root_node)
     assert root_node.child.message == message1
     assert root_node.child.child.message == message2
-
-
-@pytest.mark.django_db(transaction=True)
-def test_sort_thread():
-    id_table = {}
-    elist = EmailListFactory.create()
-    message1 = MessageFactory.create(
-        email_list=elist,
-        msgid='001@example.com',
-        date=datetime.datetime(2016, 1, 1))
-    message2 = MessageFactory.create(
-        email_list=elist,
-        msgid='002@example.com',
-        references='<001@example.com>',
-        date=datetime.datetime(2016, 1, 2))
-    message3 = MessageFactory.create(
-        email_list=elist,
-        msgid='003@example.com',
-        date=datetime.datetime(2016, 1, 3))
-    # newest first so we get an order that will change with sort
-    # (build inserts root_set memebers as it processes)
-    build_container(message1, id_table, 0)
-    build_container(message2, id_table, 0)
-    build_container(message3, id_table, 0)
-    root_node = find_root_set(id_table)
-    sort_thread(root_node)
-    order = [c.message.msgid for c in root_node.child.walk()]
-    assert order == [u'003@example.com',u'001@example.com',u'002@example.com']
-
-
-@pytest.mark.django_db(transaction=True)
-def test_subject_is_reply():
-    elist = EmailListFactory.create()
-    message1 = MessageFactory.create(
-        email_list=elist,
-        subject='New product',
-        date=datetime.datetime(2016, 1, 1))
-    message2 = MessageFactory.create(
-        email_list=elist,
-        subject='Re: New product',
-        date=datetime.datetime(2016, 1, 2))
-    assert subject_is_reply(message2)
-    assert not subject_is_reply(message1)
-
-
-@pytest.mark.django_db(transaction=True)
-def test_prune_empty_containers():
-    tree = create_tree()
-    elist = EmailListFactory.create()
-    message1 = MessageFactory.create(
-        email_list=elist,
-        subject='New product',
-        date=datetime.datetime(2016, 1, 1))
-    for container in tree.c1.walk():
-        container.message = message1
-    container = Container()
-    tree.c3.child = container
-    container.parent = tree.c3.child
-    assert len(list(tree.c1.walk())) == 8
-    prune_empty_containers(tree.c1)
-    assert len(list(tree.c1.walk())) == 7
-    assert tree.c3.child is None
-
-
-def test_gather_siblings():
-    tree = create_tree()
-    siblings = defaultdict(list)
-    gather_siblings(tree.c1,siblings)
-    assert siblings[tree.c1] == [tree.c2,tree.c4,tree.c6,tree.c7]
-    assert siblings[tree.c2] == [tree.c3]
-    assert siblings[tree.c4] == [tree.c5]
-
-
-def test_sort_siblings():
-    pass
 
 
 @pytest.mark.django_db(transaction=True)
@@ -380,3 +340,69 @@ def test_process_corrupt_refs_3():
     <485FC032-3E11-4684-B578-DEF94BF82611@bsdimp.com>
     '''
     pass
+
+
+@pytest.mark.django_db(transaction=True)
+def test_prune_empty_containers():
+    tree = create_tree()
+    elist = EmailListFactory.create()
+    message1 = MessageFactory.create(
+        email_list=elist,
+        subject='New product',
+        date=datetime.datetime(2016, 1, 1))
+    for container in tree.c1.walk():
+        container.message = message1
+    container = Container()
+    tree.c3.child = container
+    container.parent = tree.c3.child
+    assert len(list(tree.c1.walk())) == 8
+    prune_empty_containers(tree.c1)
+    assert len(list(tree.c1.walk())) == 7
+    assert tree.c3.child is None
+
+
+def test_sort_siblings():
+    pass
+
+
+@pytest.mark.django_db(transaction=True)
+def test_sort_thread():
+    id_table = {}
+    elist = EmailListFactory.create()
+    message1 = MessageFactory.create(
+        email_list=elist,
+        msgid='001@example.com',
+        date=datetime.datetime(2016, 1, 1))
+    message2 = MessageFactory.create(
+        email_list=elist,
+        msgid='002@example.com',
+        references='<001@example.com>',
+        date=datetime.datetime(2016, 1, 2))
+    message3 = MessageFactory.create(
+        email_list=elist,
+        msgid='003@example.com',
+        date=datetime.datetime(2016, 1, 3))
+    # newest first so we get an order that will change with sort
+    # (build inserts root_set memebers as it processes)
+    build_container(message1, id_table, 0)
+    build_container(message2, id_table, 0)
+    build_container(message3, id_table, 0)
+    root_node = find_root_set(id_table)
+    sort_thread(root_node)
+    order = [c.message.msgid for c in root_node.child.walk()]
+    assert order == [u'003@example.com',u'001@example.com',u'002@example.com']
+
+
+@pytest.mark.django_db(transaction=True)
+def test_subject_is_reply():
+    elist = EmailListFactory.create()
+    message1 = MessageFactory.create(
+        email_list=elist,
+        subject='New product',
+        date=datetime.datetime(2016, 1, 1))
+    message2 = MessageFactory.create(
+        email_list=elist,
+        subject='Re: New product',
+        date=datetime.datetime(2016, 1, 2))
+    assert subject_is_reply(message2)
+    assert not subject_is_reply(message1)
