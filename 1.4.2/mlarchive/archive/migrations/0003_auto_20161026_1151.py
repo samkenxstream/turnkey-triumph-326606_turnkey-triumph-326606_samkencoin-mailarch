@@ -50,7 +50,7 @@ def compute_threads(apps, schema_editor):
                 date = branch.message.date
                 first = branch.message
             thread = Thread.objects.create(date=date, first=first)
-            for order,container in enumerate(branch.export()):
+            for order,container in enumerate(branch.walk()):
                 if container.is_empty():
                     pass
                 else:

@@ -1,4 +1,15 @@
 
+mailarch (1.4.4) ietf; urgency=normal
+
+ * Thread sorting and display improvements
+
+-- Ryan Cross <rcross@amsl.com>  28 Sep 2016 16:30:00 +0800
+
+mailarch (1.4.3) ietf; urgency=normal
+
+
+-- Ryan Cross <rcross@amsl.com>  28 Sep 2016 16:30:00 +0800
+
 mailarch (1.4.2) ietf; urgency=normal
 
  * Move to Virtualenv implementation
