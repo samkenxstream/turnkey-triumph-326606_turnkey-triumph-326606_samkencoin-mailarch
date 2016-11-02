@@ -118,12 +118,6 @@ def test_compute_thread():
     assert message2.thread_depth == 1
 
 
-def test_container_export():
-    tree = create_tree()
-    results = [c.depth for c in tree.c1.export()]
-    assert results == [0,1,2,1,2,1,1]
-
-
 def test_container_has_ancestor():
     '''Test has_ancestor, finding elements higher up tree'''
     tree = create_tree()
@@ -171,6 +165,9 @@ def test_container_walk():
     flat = [c for c in tree.c1.walk()]
     assert flat == [tree.c1, tree.c2, tree.c3, tree.c4, tree.c5, tree.c6,
                     tree.c7]
+    # check depth
+    depths = [c.depth for c in tree.c1.walk()]
+    assert depths == [0,1,2,1,2,1,1]
 
 
 def test_count_root_set():

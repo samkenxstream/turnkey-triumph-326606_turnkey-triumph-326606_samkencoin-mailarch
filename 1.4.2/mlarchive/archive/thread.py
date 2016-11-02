@@ -1,5 +1,23 @@
 '''This module implements the Zawinksi threading algorithm.
 https://www.jwz.org/doc/threading.html
+
+The main function is process(), which takes a queryset, ie. all messages
+in a list, and returns the root_node of a container tree representing
+the thread.  Use root_node.walk() to walk the container tree.
+
+NOTE: There are certain circumstances where this container tree will
+have empty containers at the root level:
+
+1) When multiple top-level messages are found with the same base subject line
+(all prefixes stripped away) they are collected under a top-level dummy
+container.  This is potentially confusing when there are messages with the
+same subject line that aren't part of a thread.  ie. generic email notifications
+that reuse the same subject line.
+
+2) Currently, if a thread contains messages that were identified (correctly)
+by the subject, and they have no references, we will get a top-level dummy
+container that has these as siblings to the original first message of 
+the thread.
 '''
 import sys
 import re
@@ -110,29 +128,18 @@ class Container(object):
         else:
             return None
 
-    def walk(self):
-        '''Walk the structure rooted at this container'''
-        yield self
-        if self.child:
-            for container in self.child.walk():
-                yield container
-        if self.next:
-            for container in self.next.walk():
-                yield container
 
-
-    def export(self, depth=0):
+    def walk(self, depth=0):
         '''Returns a generator that walks the tree and returns
-        containers, assigning depth and order attributes
-        '''
-        self.depth = depth
-        yield self
-        if self.child:
-            for container in self.child.export(depth=depth + 1):
-                yield container
-        if self.next:
-            for container in self.next.export(depth=depth):
-                yield container
+        containers'''
+        container = self
+        while container:
+            container.depth = depth
+            yield container
+            if container.child:
+                for c in container.child.walk(depth=depth + 1):
+                    yield c
+            container = container.next
 
 
 def build_container(message, id_table, bogus_id_count):
@@ -253,7 +260,7 @@ def compute_thread(thread):
     queryset = thread.message_set.all().order_by('date')
     root_node = process(queryset)
     for branch in get_root_set(root_node):
-        for order,container in enumerate(branch.export()):
+        for order,container in enumerate(branch.walk()):
             if container.is_empty():
                 pass
             else:
@@ -298,21 +305,14 @@ def count_root_set(parent):
 
 def display_thread(parent, depth=0):
     '''Prints the thread.'''
-    global CONTAINER_COUNT
-    container = parent.child
-    while container:
-        CONTAINER_COUNT += 1
+    for container in parent.walk():
         if container.message:
-            print '  ' * depth + container.message.subject + '  ' + container.message.date.strftime("%Y-%m-%d %H:%M")
+            print '  ' * container.depth + container.message.subject + '  ' + container.message.date.strftime("%Y-%m-%d %H:%M")
         else:
             if container.parent is None:
                 print "(Empty)"
             else:
                 print container
-                break
-        if container.child:
-            display_thread(container, depth=depth + 1)
-        container = container.next
 
 
 def find_root(node):
