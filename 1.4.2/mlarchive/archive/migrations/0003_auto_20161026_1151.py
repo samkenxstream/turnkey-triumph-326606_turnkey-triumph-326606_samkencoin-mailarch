@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations, connection
+from django.db import migrations
 
 from mlarchive.archive.thread import process, get_root_set
 
@@ -9,7 +9,7 @@ from mlarchive.archive.thread import process, get_root_set
 def clear_threads(apps, schema_editor):
     '''Delete existing threads in preparation for re-compute
     Since Message.thread is actually a mandatory field we
-    are setting all Messsages to thread 1 and deleting all 
+    are setting all Messsages to thread 1 and deleting all
     the other threads.  This way it will be simple to tell
     which messages, if any, don't get a new thread.
     '''
@@ -41,6 +41,8 @@ def compute_threads(apps, schema_editor):
     # for elist in EmailList.objects.all().order_by('name'):
     for elist in EmailList.objects.filter(name='cellar'):
         queryset = Message.objects.filter(email_list=elist).order_by('date')
+        if not queryset:
+            continue
         root_node = process(queryset)
         for branch in get_root_set(root_node):
             if branch.is_empty():
@@ -50,7 +52,7 @@ def compute_threads(apps, schema_editor):
                 date = branch.message.date
                 first = branch.message
             thread = Thread.objects.create(date=date, first=first)
-            for order,container in enumerate(branch.walk()):
+            for order, container in enumerate(branch.walk()):
                 if container.is_empty():
                     pass
                 else:
@@ -61,12 +63,12 @@ def compute_threads(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
+    '''Set Message thread attributes'''
     dependencies = [
         ('archive', '0002_auto_20161026_1139'),
     ]
 
     operations = [
-        migrations.RunPython(clear_threads,reverse_clear_threads),
-        migrations.RunPython(compute_threads,reverse_compute_threads),
+        migrations.RunPython(clear_threads, reverse_clear_threads),
+        migrations.RunPython(compute_threads, reverse_compute_threads),
     ]

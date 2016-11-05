@@ -11,28 +11,28 @@ have empty containers at the root level:
 1) When multiple top-level messages are found with the same base subject line
 (all prefixes stripped away) they are collected under a top-level dummy
 container.  This is potentially confusing when there are messages with the
-same subject line that aren't part of a thread.  ie. generic email notifications
-that reuse the same subject line.
+same subject line that aren't part of a thread.  ie. generic email
+notifications that reuse the same subject line.
 
 2) Currently, if a thread contains messages that were identified (correctly)
 by the subject, and they have no references, we will get a top-level dummy
-container that has these as siblings to the original first message of 
+container that has these as siblings to the original first message of
 the thread.
 '''
-import sys
+
 import re
 
 from collections import defaultdict
 from operator import methodcaller
 
-
 CONTAINER_COUNT = 0
 DEBUG = False
 REFERENCE_RE = re.compile(r'<(.*?)>')
 
+
 class Container(object):
     '''Used to construct the thread ordering then discarded'''
-    global DEBUG
+
     def __init__(self, message=None):
         self.message = message
         self.parent = None
@@ -60,12 +60,12 @@ class Container(object):
             next_)
 
     def descriptor(self):
-        '''Descriptive text for display'''
+        '''Descriptive text for display of container object'''
         if self.is_empty():
             return 'Empty'
         else:
-            subject = self.message.subject.encode('ascii','replace')
-            return '{} ({})'.format(subject,self.message.msgid)
+            subject = self.message.subject.encode('ascii', 'replace')
+            return '{} ({})'.format(subject, self.message.msgid)
 
     def has_ancestor(self, target):
         '''Returns True if target is an ancestor'''
@@ -77,15 +77,8 @@ class Container(object):
             return self.parent.has_ancestor(target)
 
     def has_descendent(self, target):
-        '''Returns True if the target is a descendent
-        if self.child is None:
-            return False
-        elif self.child == target:
-            return True
-        else:
-            return self.child.has_descendent(target)
-        '''
-        flat = [ x for x in self.walk() ]
+        '''Returns True if the target is a descendent'''
+        flat = [c for c in self.walk()]
         return target in flat
 
     def has_relative(self, target):
@@ -97,7 +90,7 @@ class Container(object):
         return self.message is None
 
     def reverse_children(self):
-        '''Reverse the children'''
+        '''Reverse order of children'''
         if self.child:
             prev = None
             kid = self.child
@@ -128,7 +121,6 @@ class Container(object):
         else:
             return None
 
-
     def walk(self, depth=0):
         '''Returns a generator that walks the tree and returns
         containers'''
@@ -139,26 +131,27 @@ class Container(object):
             if container.child:
                 for c in container.child.walk(depth=depth + 1):
                     yield c
+            if depth == 0:
+                break
             container = container.next
 
 
 def build_container(message, id_table, bogus_id_count):
     '''Builds Container objects for messages'''
-    global DEBUG
-    id = message.msgid
+    msgid = message.msgid
     container = id_table.get(id, None)
     if container:
         if container.is_empty():
             container.message = message
         else:
             # indicates a duplicate message-id
-            id = "Bogus-id:{}".format(bogus_id_count)
+            msgid = "Bogus-id:{}".format(bogus_id_count)
             bogus_id_count += 1
             container = None
 
     if not container:
         container = Container(message)
-        id_table[id] = container
+        id_table[msgid] = container
 
     # 1.B
     # process references
@@ -169,12 +162,12 @@ def build_container(message, id_table, bogus_id_count):
         if not ref:
             ref = Container()
             id_table[reference_id] = ref
-        
+
         # init list
         if DEBUG:
             print "in message: {}".format(message.msgid)
             print "checking reference: {}".format(reference_id)
-            print "checking {} for descendent {}".format(parent_ref,ref)
+            print "checking {} for descendent {}".format(parent_ref, ref)
         if (parent_ref and                  # there is a parent
                 ref.parent is None and      # don't have a parent already
                 parent_ref != ref and       # not a tight loop
@@ -188,7 +181,8 @@ def build_container(message, id_table, bogus_id_count):
     # At this point parent_ref is set to the container of the last element
     # in the reference field.  make that be the parent of this container,
     # unless doing so would introduce circularity
-    if parent_ref and (parent_ref == container or container.has_descendent(parent_ref)):
+    if parent_ref and (parent_ref == container or
+                       container.has_descendent(parent_ref)):
         parent_ref = None
 
     # If it has a parent already, that's there because we saw this message
@@ -205,7 +199,9 @@ def build_container(message, id_table, bogus_id_count):
             prev = rest
             rest = rest.next
         if rest is None:
-            raise Exception("Couldn't find {} in  parent {}".format(container,container.parent))
+            raise Exception("Couldn't find {} in  parent {}".format(
+                container,
+                container.parent))
         if prev is None:
             container.parent.child = container.next
         else:
@@ -218,14 +214,15 @@ def build_container(message, id_table, bogus_id_count):
         container.next = parent_ref.child
         parent_ref.child = container
 
-    if DEBUG: 
+    if DEBUG:
         root = find_root(container)
         display_thread(root)
-        s = raw_input("Press enter")
+        raw_input("Press enter")
 
 
 def build_subject_table(root_node):
-    '''Builds a mapping of base subject (subject stripped of prefixes) to container'''
+    '''Builds a mapping of base subject (subject stripped of prefixes) to
+    container'''
     subject_table = {}
     container = root_node.child
     while container:
@@ -239,14 +236,17 @@ def build_subject_table(root_node):
             if not existing:
                 subject_table[message.base_subject] = container
             # this one is a dummy container and the old one is not: the
-            # dummy one is more interesting as a root, so put it in the table instead
+            # dummy one is more interesting as a root, so put it in the table
+            # instead
             elif container.is_empty() and not existing.is_empty():
                 subject_table[message.base_subject] = container
             # the container in the table has a "Re:" version of this subjet,
             # and this container has a non-"Re:" version.
             # the non-"Re:" version is the more interesting of the two
-            elif (existing.message and subject_is_reply(existing.message) and
-                    (container.message and not subject_is_reply(container.message))):
+            elif (existing.message and
+                  subject_is_reply(existing.message) and
+                  (container.message and
+                   not subject_is_reply(container.message))):
                 subject_table[message.base_subject] = container
         container = container.next
 
@@ -260,12 +260,12 @@ def compute_thread(thread):
     queryset = thread.message_set.all().order_by('date')
     root_node = process(queryset)
     for branch in get_root_set(root_node):
-        for order,container in enumerate(branch.walk()):
+        for order, container in enumerate(branch.walk()):
             if container.is_empty():
                 pass
             else:
-                message = container.message                
-                if (message.thread_order != order or 
+                message = container.message
+                if (message.thread_order != order or
                         message.thread_depth != container.depth):
                     message.thread_order = order
                     message.thread_depth = container.depth
@@ -303,11 +303,14 @@ def count_root_set(parent):
     return count
 
 
-def display_thread(parent, depth=0):
+def display_thread(parent):
     '''Prints the thread.'''
     for container in parent.walk():
         if container.message:
-            print '  ' * container.depth + container.message.subject + '  ' + container.message.date.strftime("%Y-%m-%d %H:%M")
+            print '{indent}{subject} {date}'.format(
+                indent=' ' * container.depth,
+                subject=container.message.subject,
+                date=container.message.date.strftime("%Y-%m-%d %H:%M"))
         else:
             if container.parent is None:
                 print "(Empty)"
@@ -393,7 +396,9 @@ def gather_subjects(root_node):
                         tail = tail.next
                     container.child = None
                 # if old is empty and container is reply and old is not
-                elif old.message is None or (container.message and subject_is_reply(container.message) and not subject_is_reply(old.message)):
+                elif old.message is None or (container.message and
+                            subject_is_reply(container.message) and
+                            not subject_is_reply(old.message)):
                     container.parent = old
                     container.next = old.child
                     old.child = container
@@ -536,14 +541,16 @@ def sort_siblings(siblings, reverse=False):
     by adjusting container.next.  Returns sorted list.
     * Has side-effects *
     '''
-    sorted_siblings = sorted(siblings, key=methodcaller('sort_date'), reverse=reverse)
+    sorted_siblings = sorted(
+        siblings,
+        key=methodcaller('sort_date'),
+        reverse=reverse)
     sorted_siblings_iter = iter(sorted_siblings)
     prev = sorted_siblings_iter.next()
     for container in sorted_siblings_iter:
         prev.next = container
         prev = container
-    else:
-        prev.next = None
+    prev.next = None
     return sorted_siblings
 
 
@@ -556,9 +563,9 @@ def sort_thread(root_node):
     gather_siblings(root_node, siblings)
     # sort root set (they have no parent)
     root_set = siblings.pop(None)
-    root_node.child = sort_siblings(root_set,reverse=True)[0]
+    root_node.child = sort_siblings(root_set, reverse=True)[0]
     # sort remaining siblings
-    for parent,children in siblings.items():
+    for parent, children in siblings.items():
         if len(children) > 1:
             parent.child = sort_siblings(children)[0]
 
