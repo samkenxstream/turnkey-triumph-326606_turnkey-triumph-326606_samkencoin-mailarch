@@ -38,8 +38,7 @@ def compute_threads(apps, schema_editor):
     Message = apps.get_model("archive", "Message")
     Thread = apps.get_model("archive", "Thread")
 
-    # for elist in EmailList.objects.all().order_by('name'):
-    for elist in EmailList.objects.filter(name='cellar'):
+    for elist in EmailList.objects.all().order_by('name'):
         queryset = Message.objects.filter(email_list=elist).order_by('date')
         if not queryset:
             continue
