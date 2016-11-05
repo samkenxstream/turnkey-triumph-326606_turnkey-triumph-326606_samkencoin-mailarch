@@ -48,8 +48,23 @@ def do_thread(elist, args):
     #ids = ['55ADF8D7.1000608@meinberg.de', '613F85B8-20E2-45AB-A1D9-1CACC5B82F64@noao.edu']
     #queryset = Message.objects.filter(email_list__name='ntp',subject__contains='Proposed REFID changes').order_by('date')
     #queryset = Message.objects.filter(email_list__name='ntp',msgid__in=ids).order_by('date')
-    process(queryset, debug=args.verbose)
+    if not queryset:
+        return
 
+    root=process(queryset, debug=args.verbose)
+    
+    # check walk
+    count = 0
+    empty = 0
+    for c in root.walk():
+        count = count + 1
+        if c.is_empty():
+            empty = empty + 1
+
+    print "Messages: {}, Containers: {}, Empty {}".format(
+        queryset.count(),
+        count,
+        empty)
 
 def main():
     parser = argparse.ArgumentParser()
