@@ -634,6 +634,10 @@ table.msg-list-header-table th a.btn {
         vertical-align: top;
     }
     
+    .xtd a {
+        display: block;
+    }
+    
     .xtbody {
         display: table-row-group;
     }
