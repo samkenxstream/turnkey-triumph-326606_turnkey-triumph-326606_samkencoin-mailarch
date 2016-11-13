@@ -7,7 +7,8 @@ from factories import EmailListFactory, MessageFactory, ThreadFactory
 from mlarchive.archive.thread import (Container, process, build_container,
     count_root_set, find_root, find_root_set, subject_is_reply, 
     gather_subjects, prune_empty_containers, sort_thread, compute_thread,
-    gather_siblings, display_thread)
+    gather_siblings, display_thread, get_in_reply_to,
+    get_references_or_in_reply_to)
 from mlarchive.archive.models import Message
 
 
@@ -231,6 +232,46 @@ def test_gather_subjects():
 
 
 @pytest.mark.django_db(transaction=True)
+def test_get_in_reply_to():
+    elist = EmailListFactory.create()
+    # test none
+    message = MessageFactory.create(
+        email_list=elist)
+    assert get_in_reply_to(message) == None
+    # test simple
+    message = MessageFactory.create(
+        email_list=elist,
+        in_reply_to='<001@example.com>')
+    assert get_in_reply_to(message) == '001@example.com'
+    # test extra text
+    irt = 'Your message of Mon, 09 Nov 2009 13:23:44 GMT. <002@example.com>'
+    message = MessageFactory.create(
+        email_list=elist,
+        in_reply_to=irt)
+    assert get_in_reply_to(message) == '002@example.com'
+
+
+@pytest.mark.django_db(transaction=True)
+def test_get_references_or_in_reply_to():
+    elist = EmailListFactory.create()
+    # test none
+    message = MessageFactory.create(
+        email_list=elist)
+    assert get_references_or_in_reply_to(message) == []
+    # test has refs
+    message = MessageFactory.create(
+        email_list=elist,
+        references='<001@example.com> <002@example.com>')
+    assert get_references_or_in_reply_to(message) == [
+        '001@example.com', '002@example.com']
+    # test no refs, has in_reply_to
+    message = MessageFactory.create(
+        email_list=elist,
+        in_reply_to='<001@example.com>')
+    assert get_references_or_in_reply_to(message) == ['001@example.com']
+
+
+@pytest.mark.django_db(transaction=True)
 def test_process_corrupt_refs_1():
     '''Scenario: within a thread, one message's reference list gets
     corrupted (list is duplicated).  This results in a loop in the
@@ -316,7 +357,7 @@ def test_process_corrupt_refs_2():
     root_node = process(queryset)
     # we'll end up with a empty root_node and empty top-level
     # nodes with 2 messages as children
-    results = [c.message.msgid for c in root_node.child.child.walk()]
+    results = [c.message.msgid for c in root_node.child.walk() if not c.is_empty()]
     assert results == [u'000@example.com', u'001@example.com']
 
 
@@ -337,6 +378,28 @@ def test_process_corrupt_refs_3():
     <485FC032-3E11-4684-B578-DEF94BF82611@bsdimp.com>
     '''
     pass
+
+
+@pytest.mark.django_db(transaction=True)
+def test_process_in_reply_to():
+    '''Test threading algorithm handling of in_reply_to header'''
+    elist = EmailListFactory.create()
+    # first message has two missing references
+    original = MessageFactory.create(
+        email_list=elist,
+        msgid='001@example.com',
+        date=datetime.datetime(2016, 1, 1))
+    # parent reference at beginning of refs
+    reply = MessageFactory.create(
+        email_list=elist,
+        msgid='002@example.com',
+        date=datetime.datetime(2016, 1, 2),
+        in_reply_to='<001@example.com>')
+    queryset = Message.objects.all().order_by('date')
+    assert queryset.count() == 2
+    root_node = process(queryset)
+    assert root_node.child.message == original
+    assert root_node.child.child.message == reply
 
 
 @pytest.mark.django_db(transaction=True)
@@ -386,7 +449,7 @@ def test_sort_thread():
     build_container(message3, id_table, 0)
     root_node = find_root_set(id_table)
     sort_thread(root_node)
-    order = [c.message.msgid for c in root_node.child.walk()]
+    order = [c.message.msgid for c in root_node.walk() if not c.is_empty()]
     assert order == [u'003@example.com',u'001@example.com',u'002@example.com']
 
 

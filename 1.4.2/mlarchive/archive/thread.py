@@ -157,7 +157,7 @@ def build_container(message, id_table, bogus_id_count):
     # process references
     parent_ref = None
     # switch to message.get_references() after migration
-    for reference_id in get_references(message):
+    for reference_id in get_references_or_in_reply_to(message):
         ref = id_table.get(reference_id, None)
         if not ref:
             ref = Container()
@@ -428,8 +428,17 @@ def gather_subjects(root_node):
         rest = None if rest is None else rest.next
 
 
+def get_in_reply_to(message):
+    '''Returns a qualified message id from in_reply_to contents'''
+    if not message.in_reply_to:
+        return None
+    in_reply_to = REFERENCE_RE.findall(message.in_reply_to)
+    if in_reply_to:
+        return in_reply_to[0]
+
+
 def get_references(message):
-    """Returns list of message-ids from References header"""
+    '''Returns list of message-ids from References header'''
     # remove all whitespace
     refs = ''.join(message.references.split())
     refs = REFERENCE_RE.findall(refs)
@@ -439,6 +448,19 @@ def get_references(message):
         if ref not in results:
             results.append(ref)
     return results
+
+
+def get_references_or_in_reply_to(message):
+    '''Returns list of message-ids from References header if it exists,
+    else In-Reply-To header if it exists'''
+    refs = get_references(message)
+    if refs:
+        return refs
+    in_reply_to = get_in_reply_to(message)
+    if in_reply_to:
+        return [in_reply_to]
+    else:
+        return []
 
 
 def get_root_set(root_node):
