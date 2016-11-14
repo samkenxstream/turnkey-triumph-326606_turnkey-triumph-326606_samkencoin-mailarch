@@ -141,7 +141,7 @@ var mailarch = {
     },
     
     gotoMessage: function() {
-        var url = $(this).find(".xtd:nth-child(6)").html();
+        var url = $(this).find(".xtd.url-col").html();
         window.open(url);
     },
     
@@ -153,7 +153,7 @@ var mailarch = {
             mailarch.urlParams['gbt'] = '1';
         }
         // add index to URL to preserve context
-        var path = mailarch.$msgTable.find('.xtr.row-selected .xtd:nth-child(6)').text();
+        var path = mailarch.$msgTable.find('.xtr.row-selected .xtd.url-col').text();
         var parts = path.split('/');
         var hash = parts[parts.length - 1];
         mailarch.urlParams['index'] = hash;
@@ -337,7 +337,7 @@ var mailarch = {
     
     // given the row of the msg list, load the message text in the mag view pane
     loadMessage: function(row) {
-        var msgId = row.find(".xtd:last").html();
+        var msgId = row.find(".xtd.id-col").html();
         if(/^\d+$/.test(msgId)){
             mailarch.$viewPane.load('/arch/ajax/msg/?id=' + msgId, function() {
                 // NTOE: don't use cached DOM objects here because these change

@@ -650,6 +650,10 @@ table.msg-list-header-table th a.btn {
         display: table-row;
     }
     
+    .xtable.thread-sorted .xtr.thread-border .xtd {
+        border-top: 1px solid #dddddd;
+    }
+
     .list-col {
         float: none;
     }
