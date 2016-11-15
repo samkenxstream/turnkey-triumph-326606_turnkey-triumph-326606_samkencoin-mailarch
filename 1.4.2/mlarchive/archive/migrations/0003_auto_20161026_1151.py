@@ -17,7 +17,6 @@ def clear_threads(apps, schema_editor):
     Thread = apps.get_model('archive', 'Thread')
     try:
         Message.objects.all().update(thread=Thread.objects.get(pk=1))
-        migrations.RunSQL('delete from archive_thread where id > 1')
     except Thread.DoesNotExist:
         return
 
@@ -69,5 +68,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(clear_threads, reverse_clear_threads),
+        migrations.RunSQL('DELETE FROM archive_thread WHERE id>1;','SHOW TABLES;'),
         migrations.RunPython(compute_threads, reverse_compute_threads),
     ]
