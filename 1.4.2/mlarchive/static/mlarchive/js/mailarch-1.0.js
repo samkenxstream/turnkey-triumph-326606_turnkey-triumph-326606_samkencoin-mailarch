@@ -47,7 +47,6 @@ var mailarch = {
         mailarch.$msgList = $('.msg-list');
         mailarch.$msgTable = $('.msg-table');
         mailarch.$msgTableTbody = this.$msgTable.find('.xtbody');
-        mailarch.$msgTableRows = this.$msgTable.find('.xtr');
         mailarch.$pageLinks = $('#page-links');
         mailarch.$q = $('#id_q');
         mailarch.$searchButton = $('#search-button');
@@ -466,7 +465,7 @@ var mailarch = {
     },
     
     selectRow: function() {
-        mailarch.$msgTableRows.removeClass('row-selected');
+        mailarch.$msgTable.find('.xtr').removeClass('row-selected');
         $(this).addClass('row-selected');
         mailarch.loadMessage($(this));
     },
