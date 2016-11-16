@@ -15,6 +15,7 @@ var mailarch = {
     urlParams: {},
     sortDefault: new Array(),
     defaultListPaneHeight: 229,
+    scrollMargin: $('.xtr').height(),
     
     // PRIMARY FUNCTIONS =====================================
     
@@ -180,7 +181,7 @@ var mailarch = {
     
     infiniteScroll: function() {
         // BOTTOM OF SCROLL
-        if($(this).scrollTop() + $(this).innerHeight() > $(this)[0].scrollHeight - 2) {
+        if($(this).scrollTop() + $(this).innerHeight() > $(this)[0].scrollHeight - mailarch.scrollMargin) {
             if (mailarch.ajaxRequestSent) {
                 return true;
             }
