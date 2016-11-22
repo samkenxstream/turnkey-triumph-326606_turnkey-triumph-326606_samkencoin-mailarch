@@ -603,14 +603,9 @@ table.msg-list-header-table th a.btn {
 
 .header a {
     color: black;
-    /* padding: 8px 8px 8px 0; */
     padding: 8px;
     display: inline-block;
     width: 100%;
-}
-
-.header:first-child {
-    /* margin-left: 4px; */
 }
 
 @media (min-width: 768px)
@@ -621,9 +616,6 @@ table.msg-list-header-table th a.btn {
     
     .xthead {
         display: table-header-group;
-    }
-    
-    .xthead .xtd {
     }
     
     .xtd {
@@ -662,22 +654,20 @@ table.msg-list-header-table th a.btn {
         border-right: 1px solid #f6f6f6;
     }
     
-    .header a {
+    .header a, .header span {
         color: black;
-        /* padding: 8px 8px 8px 0; */
         padding: 8px;
         display: inline-block;
         width: 100%;
     }
     
     .header {
-        /* padding: 0 0 0 8px; */
         padding: 0;
         border-top: 0;
         font-weight: bold;
     }
 
-    .header:hover {
+    .header.sortable:hover {
         background-color: rgb(238,238,238);
     }
 
