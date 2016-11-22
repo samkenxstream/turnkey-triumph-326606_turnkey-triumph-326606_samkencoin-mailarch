@@ -139,7 +139,7 @@ class Container(object):
 def build_container(message, id_table, bogus_id_count):
     '''Builds Container objects for messages'''
     msgid = message.msgid
-    container = id_table.get(id, None)
+    container = id_table.get(msgid, None)
     if container:
         if container.is_empty():
             container.message = message
