@@ -47,19 +47,19 @@ def test_find_message_date_reverse(messages):
 @pytest.mark.django_db(transaction=True)
 def test_find_message_gbt(messages):
     sqs = SearchQuerySet()
-    sqs = group_by_thread(sqs,reverse=True)
+    sqs = group_by_thread(sqs,None,None,reverse=True)
     last = sqs.count() - 1
     assert find_message_gbt(sqs,sqs[0].object,reverse=True) == 0        # first
     assert find_message_gbt(sqs,sqs[1].object,reverse=True) == 1        # second
     assert find_message_gbt(sqs,sqs[last].object,reverse=True) == last  # last
     # queryset of one
     sqs = SearchQuerySet().filter(msgid=sqs[0].msgid)
-    sqs = group_by_thread(sqs,reverse=True)
+    sqs = group_by_thread(sqs,None,None,reverse=True)
     assert find_message_gbt(sqs,sqs[0].object,reverse=True) == 0
     # empty queryset
     msg = sqs[0].object
     sqs = SearchQuerySet().filter(msgid='bogus')
-    sqs = group_by_thread(sqs,reverse=True)
+    sqs = group_by_thread(sqs,None,None,reverse=True)
     assert find_message_gbt(sqs,msg,reverse=True) == -1
     
 def test_initialize_formsets():

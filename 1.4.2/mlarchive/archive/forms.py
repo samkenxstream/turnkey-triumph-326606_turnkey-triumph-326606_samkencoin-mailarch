@@ -413,7 +413,6 @@ class AdvancedSearchForm(FacetedSearchForm):
         gbt = self.cleaned_data.get('gbt')
 
         if gbt:
-            # sqs = sqs.order_by('tdate','date')
             sqs = group_by_thread(sqs, so, sso, reverse=True)
         elif so:
             if so == 'subject':

@@ -14,7 +14,7 @@ def test_thread_view(client, thread_messages):
     assert response.status_code == 200
     q = PyQuery(response.content)
     assert len(q('.msg-list .xtr')) == 4
-    ids = q('.msg-list .xtr .xtd:last-child').items()
+    ids = q('.msg-list .xtr .xtd.id-col').items()
     results = [Message.objects.get(pk=i.text()).msgid for i in ids]
     expected = [u'00001@example.com', u'00002@example.com', u'00004@example.com', u'00003@example.com']
     assert results == expected
