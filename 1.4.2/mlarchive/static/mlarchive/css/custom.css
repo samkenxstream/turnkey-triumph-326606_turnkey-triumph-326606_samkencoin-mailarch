@@ -446,6 +446,12 @@ table.msg-list-header-table th a.btn {
     color: black
 }
 
+.fa-arrow-right {
+    float: right;
+    vertical-align: middle;
+    padding-top: 3px;
+}
+
 #list-pane {
     border: 1px solid #D6D6D6;
     height: 200px;
@@ -626,9 +632,11 @@ table.msg-list-header-table th a.btn {
         vertical-align: top;
     }
     
+    /*
     .xtd a {
         display: block;
     }
+    */
     
     .xtbody {
         display: table-row-group;
