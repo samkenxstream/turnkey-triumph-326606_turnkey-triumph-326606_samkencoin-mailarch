@@ -1,0 +1,91 @@
+<!DOCTYPE html> {% load static %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %}</title>
+
+    {% block prestyle %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.css' %}" type="text/css">
+
+    {% block extrastyle %}{% endblock %}
+
+    <link rel="stylesheet" href="{% static 'mlarchive/css/custom.css' %}" type="text/css">
+        
+    {% block extrahead %}{% endblock %}
+
+    {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+</head>
+
+<body>
+
+<!-- Container -->
+<div id="container">
+
+    <header class="navbar navbar-inverse navbar-fixed-top{% if server_mode != 'production' %} navbar-dev{% endif %}">
+        <div class="container-fluid">
+            <div class="navbar-header pull-left">
+                <a class="navbar-brand" href="/">
+                   <img alt="IETF Logo" src="{% static 'mlarchive/images/ietflogo-small-transparent.png' %}">
+
+                      <span id="header-text">
+                      {% if server_mode and server_mode == "production" %}
+                      Mail Archive
+                      {% else %}
+                      <b><i>Development mode</i></b>
+                      {% endif %}
+                      </span>
+
+                </a>
+            </div> <!-- navbar-header -->
+
+            {% if not request.resolver_match.url_name == "django.contrib.auth.views.login" %}
+            <div class="navbar-header pull-right">
+                <div id="login" class="noprint">
+                {% if user.is_authenticated %}
+                    <span class="login-user pipe">{{ user }}</span>
+                    <a href="{% url "archive_logout" %}">Sign out</a>
+                {% else %}
+                    <a href="http://{{ request.get_host }}/accounts/login/?next={{request.get_full_path|urlencode}}" rel="nofollow">Sign in</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            </div> <!-- navbar-header -->
+        </div> <!-- container-fluid -->
+    </header>
+
+            <!-- 
+            <noscript>
+                <p class="navbar-text"><small>Enable Javascript for full functionality.</small></p>
+            </noscript>
+            -->
+
+        <!-- Django Messages -->
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+
+    <!-- Content -->
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+    <!-- END Content -->
+
+
+</div> <!-- END Container -->
+
+<script type="text/javascript" src="{% static 'jquery/jquery-1.12.4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+{% block js %}{% endblock %}
+
+</body>
+</html>
