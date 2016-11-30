@@ -257,6 +257,24 @@ class Message(models.Model):
         self.spam_score = self.spam_score | bit
         self.save()
 
+    def next_in_list(self):
+        """Return the next message in the list, ordered by date ascending"""
+        messages = Message.objects
+        messages = messages.filter(email_list=self.email_list,
+            date__gte=self.date)
+        messages = messages.order_by('date','id')
+        messages = messages.exclude(id=self.id)
+        return messages.first()
+
+    def previous_in_list(self):
+        """Return the previous message in the list, ordered by date ascending"""
+        messages = Message.objects
+        messages = messages.filter(email_list=self.email_list,
+            date__lte=self.date)
+        messages = messages.order_by('date','id')
+        messages = messages.exclude(id=self.id)
+        return messages.last()
+
     @property
     def thread_date(self):
         """Returns the date of the first message in the associated thread.  Use for

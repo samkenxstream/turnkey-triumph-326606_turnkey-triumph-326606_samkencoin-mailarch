@@ -11,6 +11,12 @@
       <ul>
           <li><a class="btn btn-default" href="{{ msg.list_by_date_url }}">View by Date</a></li>
           <li><a class="btn btn-default" href="{{ msg.list_by_thread_url }}">View by Thread</a></li>
+          {% if msg.next_in_list %}
+            <li><a class="btn btn-default" href="{{ msg.next_in_list.get_absolute_url }}">Next in List</a></li>
+          {% endif %}
+          {% if msg.previous_in_list %}
+            <li><a class="btn btn-default" href="{{ msg.previous_in_list.get_absolute_url }}">Previous in List</a></li>
+          {% endif %}
       </ul>
     </div> <!-- msg-aside -->
 
@@ -21,6 +27,12 @@
         <ul>
           <li><a class="btn btn-default" href="{{ msg.list_by_date_url }}">View by Date</a></li>
           <li><a class="btn btn-default" href="{{ msg.list_by_thread_url }}">View by Thread</a></li>
+          {% if msg.next_in_list %}
+            <li><a class="btn btn-default" href="{{ msg.next_in_list.get_absolute_url }}">Next in List</a></li>
+          {% endif %}
+          {% if msg.previous_in_list %}
+            <li><a class="btn btn-default" href="{{ msg.previous_in_list.get_absolute_url }}">Previous in List</a></li>
+          {% endif %}
         </ul>
       </div> <!-- msg-row -->
     </div> <!-- msg-detail -->
