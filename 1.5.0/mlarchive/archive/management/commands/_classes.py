@@ -713,8 +713,8 @@ class MessageWrapper(object):
                     pass
 
         # try In-Reply-to.  Use first msgid found, typically only one
-        if self.in_reply_to:
-            msgids = re.findall(MSGID_PATTERN,self.in_reply_to)
+        if self.in_reply_to_value:
+            msgids = re.findall(MSGID_PATTERN,self.in_reply_to_value)
             if msgids:
                 try:
                     message = Message.objects.get(msgid=msgids[0])
@@ -765,7 +765,7 @@ class MessageWrapper(object):
         self.email_list,created = EmailList.objects.get_or_create(
             name=self.listname,defaults={'description':self.listname,'private':self.private})
         self.hashcode = self.get_hash()
-        self.in_reply_to = self.email_message.get('In-Reply-To','')
+        self.in_reply_to_value = self.email_message.get('In-Reply-To','')
         self.references = self.email_message.get('References','')
         self.subject = self.get_subject()
         self.base_subject = get_base_subject(self.subject)
@@ -785,7 +785,7 @@ class MessageWrapper(object):
                              frm = self.frm,
                              from_line = self.from_line,
                              hashcode=self.hashcode,
-                             in_reply_to=self.in_reply_to,
+                             in_reply_to_value=self.in_reply_to_value,
                              msgid=self.msgid,
                              references=self.references,
                              spam_score=self.spam_score,

@@ -102,7 +102,7 @@ class Message(models.Model):
     frm = models.CharField(max_length=255, blank=True)
     from_line = models.CharField(max_length=255, blank=True)
     hashcode = models.CharField(max_length=28, db_index=True)
-    in_reply_to = models.TextField(blank=True, default='')
+    in_reply_to_value = models.TextField(blank=True, default='')
     # mapping to MHonArc message number
     legacy_number = models.IntegerField(blank=True, null=True, db_index=True)
     msgid = models.CharField(max_length=255, db_index=True)

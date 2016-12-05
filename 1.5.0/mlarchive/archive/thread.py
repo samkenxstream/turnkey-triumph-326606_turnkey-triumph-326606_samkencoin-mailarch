@@ -429,10 +429,10 @@ def gather_subjects(root_node):
 
 
 def get_in_reply_to(message):
-    '''Returns a qualified message id from in_reply_to contents'''
-    if not message.in_reply_to:
+    '''Returns a qualified message id from in_reply_to_value contents'''
+    if not message.in_reply_to_value:
         return None
-    in_reply_to = REFERENCE_RE.findall(message.in_reply_to)
+    in_reply_to = REFERENCE_RE.findall(message.in_reply_to_value)
     if in_reply_to:
         return in_reply_to[0]
 
