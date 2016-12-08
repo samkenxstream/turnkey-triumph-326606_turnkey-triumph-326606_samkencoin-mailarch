@@ -27,7 +27,7 @@ from operator import methodcaller
 
 CONTAINER_COUNT = 0
 DEBUG = False
-REFERENCE_RE = re.compile(r'<(.*?)>')
+MESSAGE_ID_RE = re.compile(r'<(.*?)>')
 
 
 class Container(object):
@@ -432,16 +432,35 @@ def get_in_reply_to(message):
     '''Returns a qualified message id from in_reply_to_value contents'''
     if not message.in_reply_to_value:
         return None
-    in_reply_to = REFERENCE_RE.findall(message.in_reply_to_value)
-    if in_reply_to:
-        return in_reply_to[0]
+    message_ids = parse_message_ids(message.in_reply_to_value)
+    if message_ids:
+        return message_ids[0]
+
+
+def get_in_reply_to_message(in_reply_to_value,email_list):
+    '''Returns the in_reply_to message, if it exists'''
+    msgids = parse_message_ids(in_reply_to_value)
+    if not msgids:
+        return None
+    msgid = msgids[0]
+    messages = Message.objects.filter(msgid=msgid)
+    if len(messages) == 0:
+        return None
+    elif len(messages) == 1:
+        return messages[0]
+    # if more than one instance of msgid prefer same list
+    same_list_messages = messages.filter(email_list=email_list)
+    if len(same_list_messages) == 1:
+        return same_list_messages[0]
+    else:
+        return messages[0]
 
 
 def get_references(message):
     '''Returns list of message-ids from References header'''
     # remove all whitespace
     refs = ''.join(message.references.split())
-    refs = REFERENCE_RE.findall(refs)
+    refs = parse_message_ids(refs)
     # de-dupe
     results = []
     for ref in refs:
@@ -469,6 +488,13 @@ def get_root_set(root_node):
     while node:
         yield node
         node = node.next
+
+
+def parse_message_ids(text):
+    '''Returns message ids from header text'''
+    if not text:
+        return []
+    return MESSAGE_ID_RE.findall(text)
 
 
 def prune_empty_containers(parent):
