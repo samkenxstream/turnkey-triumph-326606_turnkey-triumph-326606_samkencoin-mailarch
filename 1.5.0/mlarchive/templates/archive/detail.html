@@ -11,11 +11,11 @@
       <ul>
           <li><a class="btn btn-default" href="{{ msg.list_by_date_url }}">View by Date</a></li>
           <li><a class="btn btn-default" href="{{ msg.list_by_thread_url }}">View by Thread</a></li>
-          {% if msg.next_in_list %}
-            <li><a class="btn btn-default" href="{{ msg.next_in_list.get_absolute_url }}">Next in List</a></li>
+          {% if next_in_list %}
+            <li><a class="btn btn-default" href="{{ next_in_list.get_absolute_url }}">Next in List</a></li>
           {% endif %}
-          {% if msg.previous_in_list %}
-            <li><a class="btn btn-default" href="{{ msg.previous_in_list.get_absolute_url }}">Previous in List</a></li>
+          {% if previous_in_list %}
+            <li><a class="btn btn-default" href="{{ previous_in_list.get_absolute_url }}">Previous in List</a></li>
           {% endif %}
       </ul>
     </div> <!-- msg-aside -->
@@ -24,10 +24,10 @@
       {{ msg.get_body_html|safe }}
   
       <div id="related-messages">
-        {% if msg.replies.all %}
+        {% if replies %}
           <h4>Replies:</h4>
           <ul>
-          {% for reply in msg.replies.all %}
+          {% for reply in replies %}
             <li>
               <a href="{{ reply.get_absolute_url }}">{{ reply.subject }}</a><br>
               {{ reply.frm }}
@@ -35,17 +35,29 @@
           {% endfor %}
           </ul>
         {% endif %}
+        {% if references %}
+          <h4>References:</h4>
+          <ul>
+          {% for ref in references %}
+            <li>
+              <a href="{{ ref.get_absolute_url }}">{{ ref.subject }}</a><br>
+              {{ ref.frm }}
+            </li>
+          {% endfor %}
+          </ul>
+        {% endif %}
+
       </div>
 
       <div id="msg-nav">
         <ul>
           <li><a class="btn btn-default" href="{{ msg.list_by_date_url }}">View by Date</a></li>
           <li><a class="btn btn-default" href="{{ msg.list_by_thread_url }}">View by Thread</a></li>
-          {% if msg.next_in_list %}
-            <li><a class="btn btn-default" href="{{ msg.next_in_list.get_absolute_url }}">Next in List</a></li>
+          {% if next_in_list %}
+            <li><a class="btn btn-default" href="{{ next_in_list.get_absolute_url }}">Next in List</a></li>
           {% endif %}
-          {% if msg.previous_in_list %}
-            <li><a class="btn btn-default" href="{{ msg.previous_in_list.get_absolute_url }}">Previous in List</a></li>
+          {% if previous_in_list %}
+            <li><a class="btn btn-default" href="{{ previous_in_list.get_absolute_url }}">Previous in List</a></li>
           {% endif %}
         </ul>
       </div> <!-- msg-nav -->

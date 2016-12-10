@@ -3,8 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 
-from mlarchive.archive.models import Message
-from mlarchive.archive.thread import get_in_reply_to_message
+from mlarchive.archive.models import Message, get_in_reply_to_message
 
 
 def get_replies(apps, schema_editor):

@@ -437,25 +437,6 @@ def get_in_reply_to(message):
         return message_ids[0]
 
 
-def get_in_reply_to_message(in_reply_to_value,email_list):
-    '''Returns the in_reply_to message, if it exists'''
-    msgids = parse_message_ids(in_reply_to_value)
-    if not msgids:
-        return None
-    msgid = msgids[0]
-    messages = Message.objects.filter(msgid=msgid)
-    if len(messages) == 0:
-        return None
-    elif len(messages) == 1:
-        return messages[0]
-    # if more than one instance of msgid prefer same list
-    same_list_messages = messages.filter(email_list=email_list)
-    if len(same_list_messages) == 1:
-        return same_list_messages[0]
-    else:
-        return messages[0]
-
-
 def get_references(message):
     '''Returns list of message-ids from References header'''
     # remove all whitespace

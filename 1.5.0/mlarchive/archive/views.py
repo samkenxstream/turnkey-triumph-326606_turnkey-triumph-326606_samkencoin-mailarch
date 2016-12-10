@@ -317,7 +317,12 @@ def detail(request, list_name, id, msg):
     NOTE: the "msg" argument is a Message object added by the check_access decorator
     """
     return render_to_response('archive/detail.html', {
-        'msg':msg},
+        'msg':msg,
+        # cache items for use in template
+        'next_in_list':msg.next_in_list(),
+        'previous_in_list':msg.previous_in_list(),
+        'replies':msg.replies.all(),
+        'references':msg.get_references_messages()},
         RequestContext(request, {}),
     )
 

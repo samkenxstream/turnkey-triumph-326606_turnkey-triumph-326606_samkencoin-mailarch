@@ -15,6 +15,7 @@ from django.db import models
 from django.utils.log import getLogger
 
 from mlarchive.archive.generator import Generator
+from mlarchive.archive.thread import parse_message_ids
 
 TXT2HTML = ['/usr/bin/mhonarc', '-single']
 ATTACHMENT_PATTERN = r'<p><strong>Attachment:((?:.|\n)*?)</p>'
@@ -24,9 +25,23 @@ logger = getLogger('mlarchive.custom')
 
 
 # --------------------------------------------------
-# Managers
+# Helper Functions
 # --------------------------------------------------
 
+def get_in_reply_to_message(in_reply_to_value, email_list):
+    '''Returns the in_reply_to message, if it exists'''
+    msgids = parse_message_ids(in_reply_to_value)
+    if not msgids:
+        return None
+    return get_message_prefer_list(msgids[0],email_list)
+
+
+def get_message_prefer_list(msgid, email_list):
+    '''Returns Message (or None) prefers proivded list'''
+    try:
+        return Message.objects.get(msgid=msgid, email_list=email_list)
+    except Message.DoesNotExist:
+        return Message.objects.filter(msgid=msgid).first()
 
 # --------------------------------------------------
 # Models
@@ -236,6 +251,16 @@ class Message(models.Model):
             if ref not in results:
                 results.append(ref)
         return results
+
+    def get_references_messages(self):
+        """Returns list of messages from Rerefences header"""
+        messages = []
+        for msgid in self.get_references():
+            message = get_message_prefer_list(msgid,self.email_list)
+            if message:
+                messages.append(message)
+        return messages
+
 
     def get_removed_dir(self):
         return self.email_list.removed_dir

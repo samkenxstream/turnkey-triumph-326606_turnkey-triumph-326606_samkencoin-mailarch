@@ -19,10 +19,11 @@ from django.conf import settings
 from django.core.management.base import CommandError
 from dateutil.tz import tzoffset
 
-from mlarchive.archive.models import Attachment, EmailList, Legacy, Message, Thread
+from mlarchive.archive.models import (Attachment, EmailList, Legacy, Message,
+    Thread, get_in_reply_to_message)
 from mlarchive.archive.management.commands._mimetypes import CONTENT_TYPES, UNKNOWN_CONTENT_TYPE
 from mlarchive.archive.inspectors import *
-from mlarchive.archive.thread import compute_thread, get_in_reply_to_message
+from mlarchive.archive.thread import compute_thread
 from mlarchive.utils.decorators import check_datetime
 from mlarchive.utils.encoding import decode_safely, decode_rfc2047_header
 
