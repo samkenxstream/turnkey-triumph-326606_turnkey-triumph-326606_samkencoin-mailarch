@@ -292,6 +292,12 @@ class Message(models.Model):
         messages = messages.exclude(id=self.id)
         return messages.first()
 
+    def next_in_thread(self):
+        """Return the next message in thread"""
+        messages = self.thread.message_set.filter(thread_order__gt=self.thread_order)
+        messages = messages.order_by('thread_order')
+        return messages.first()
+
     def previous_in_list(self):
         """Return the previous message in the list, ordered by date ascending"""
         messages = Message.objects
@@ -299,6 +305,12 @@ class Message(models.Model):
             date__lte=self.date)
         messages = messages.order_by('date','id')
         messages = messages.exclude(id=self.id)
+        return messages.last()
+
+    def previous_in_thread(self):
+        """Return the previous message in thread"""
+        messages = self.thread.message_set.filter(thread_order__lt=self.thread_order)
+        messages = messages.order_by('thread_order')
         return messages.last()
 
     @property

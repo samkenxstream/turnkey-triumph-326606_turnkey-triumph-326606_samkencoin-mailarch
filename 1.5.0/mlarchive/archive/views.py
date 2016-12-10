@@ -320,7 +320,9 @@ def detail(request, list_name, id, msg):
         'msg':msg,
         # cache items for use in template
         'next_in_list':msg.next_in_list(),
+        'next_in_thread':msg.next_in_thread(),
         'previous_in_list':msg.previous_in_list(),
+        'previous_in_thread':msg.previous_in_thread(),
         'replies':msg.replies.all(),
         'references':msg.get_references_messages()},
         RequestContext(request, {}),
