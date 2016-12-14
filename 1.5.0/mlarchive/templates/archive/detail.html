@@ -23,6 +23,12 @@
           {% if previous_in_thread %}
             <li><a class="btn btn-default" href="{{ previous_in_thread.get_absolute_url }}">Previous in Thread</a></li>
           {% endif %}
+          {% if next_in_search %}
+            <li><a class="btn btn-default" href="{{ next_in_search.get_absolute_url }}/?qid={{ queryid }}">Next in Search</a></li>
+          {% endif %}
+          {% if previous_in_search %}
+            <li><a class="btn btn-default" href="{{ previous_in_search.get_absolute_url }}/?qid={{ queryid }}">Previous in Search</a></li>
+          {% endif %}
       </ul>
     </div> <!-- msg-aside -->
 
@@ -70,6 +76,12 @@
           {% endif %}
           {% if previous_in_thread %}
             <li><a class="btn btn-default" href="{{ previous_in_thread.get_absolute_url }}">Previous in Thread</a></li>
+          {% endif %}
+          {% if next_in_search %}
+            <li><a class="btn btn-default" href="{{ next_in_search.get_absolute_url }}/?qid={{ queryid }}">Next in Search</a></li>
+          {% endif %}
+          {% if previous_in_search %}
+            <li><a class="btn btn-default" href="{{ previous_in_search.get_absolute_url }}/?qid={{ queryid }}">Previous in Search</a></li>
           {% endif %}
         </ul>
       </div> <!-- msg-nav -->

@@ -22,7 +22,7 @@ from mlarchive.utils.decorators import check_access, superuser_only, pad_id
 from mlarchive.archive import actions
 from mlarchive.archive.query_utils import get_kwargs
 from mlarchive.archive.view_funcs import (initialize_formsets, get_columns, get_export,
-    find_message_date, find_message_gbt)
+    find_message_date, find_message_gbt, get_query_neighbors)
 
 from models import *
 from forms import *
@@ -316,13 +316,26 @@ def detail(request, list_name, id, msg):
     """Displays the requested message.
     NOTE: the "msg" argument is a Message object added by the check_access decorator
     """
+    if 'qid' in request.GET and cache.get(request.GET['qid']):
+        queryid = request.GET['qid']
+        previous_in_search, next_in_search = get_query_neighbors(
+            query = cache.get(queryid),
+            message = msg)
+    else:
+        previous_in_search = None
+        next_in_search = None
+        queryid = None
+
     return render_to_response('archive/detail.html', {
         'msg':msg,
         # cache items for use in template
         'next_in_list':msg.next_in_list(),
         'next_in_thread':msg.next_in_thread(),
+        'next_in_search':next_in_search,
         'previous_in_list':msg.previous_in_list(),
         'previous_in_thread':msg.previous_in_thread(),
+        'previous_in_search':previous_in_search,
+        'queryid':queryid,
         'replies':msg.replies.all(),
         'references':msg.get_references_messages()},
         RequestContext(request, {}),

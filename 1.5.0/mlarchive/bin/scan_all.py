@@ -2,6 +2,8 @@
 """
 Generic scan script to scan the archive for messages with particular attributes.
 Define a scan as a function.  Specifiy the function as the first command line argument.
+You can pass additional positional arguments on the command line, and specify them
+in the function definition.
 
 usage:
 
@@ -333,6 +335,26 @@ def missing_files():
             print 'missing: %s:%s:%s' % (message.email_list, message.pk, message.date)
             total += 1
     print '%d of %d missing.' % (total, messages.count())
+
+def missing_from_index(start):
+    """Scan messages, starting from updated = start (YYYY-MM-DDTHH:MM:SS),
+    and report any that aren't in the search index"""
+    from dateutil.parser import parse
+    from haystack.query import SearchQuerySet
+    start_date = parse(start)
+    missing = 0
+    messages = Message.objects.filter(updated__gte=start_date)
+    for message in messages:
+        results = SearchQuerySet().filter(msgid=message.msgid)
+        if not results:
+            print "Not found: {},{},{},{}".format(
+                message.pk,
+                message.date,
+                message.email_list.name,
+                message.msgid)
+            missing += 1
+    print "Processed: {}".format(messages.count())
+    print "Missing: {}".format(missing)
 
 def mmdfs():
     """Scan all mailbox files and print first lines of MMDF types, looking for

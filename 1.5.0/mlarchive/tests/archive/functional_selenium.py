@@ -4,6 +4,8 @@ import urlparse
 import pytest
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.core.urlresolvers import reverse
+from pyquery import PyQuery
 from selenium.webdriver.phantomjs.webdriver import WebDriver
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -69,4 +71,27 @@ class MySeleniumTests(StaticLiveServerTestCase):
         self.assertIn('Archive', self.selenium.title)
         self.assertIn(messages[0].msgid, self.selenium.page_source)
 
+    @pytest.mark.usefixtures("thread_messages")
+    def test_message_detail_next_search(self):
+        '''Test next message in search results button of message detail'''
+        # perform regular search
+        url = reverse('archive_search') + '?email_list=acme'
+        url = urlparse.urljoin(self.live_server_url, url)
+        self.selenium.get(url)
+        # print self.selenium.page_source
+        q = PyQuery(self.selenium.page_source)
+        assert len(q('.xtr')) == 4
+
+        # navigate to message detail
+        #self.selenium.find_element_by_link_text('Previous in List').click()
+        elements = self.selenium.find_elements_by_xpath("//div[contains(@class, 'xtr')]/a")
+        print elements
+        self.assertTrue(False)
+        elements[0].click()
+
+        # Wait until the response is received
+        WebDriverWait(self.selenium, timeout).until(
+            lambda driver: driver.find_element_by_tag_name('body'))
         
+        # click next in search button
+        self.selenium.find_element_by_link_text('Next in Search').click()
