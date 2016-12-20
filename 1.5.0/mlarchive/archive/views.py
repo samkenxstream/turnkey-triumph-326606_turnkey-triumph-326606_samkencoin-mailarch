@@ -111,7 +111,7 @@ class CustomSearchView(SearchView):
         query_string = '?' + self.request.META['QUERY_STRING']
 
         # browse list
-        match = re.search(r"^email_list=([a-zA-Z0-9\_\-]+)",query_string)
+        match = re.search(r"^\?email_list=([a-zA-Z0-9\_\-]+)",query_string)
         if match:
             try:
                 browse_list = EmailList.objects.get(name=match.group(1))
