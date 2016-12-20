@@ -58,7 +58,7 @@
             {% endif %}
             <i class="fa fa-chevron-left" aria-hidden="true"></i></a>
           </li>
-          <li title="Return to search"><a href="#">Search</a></li>
+          <li title="Return to search"><a href="{{ search_url }}">Search</a></li>
           <li title="Next in search results">
             {% if next_in_search %}
               <a href="{{ next_in_search.get_absolute_url }}/?qid={{ queryid }}">

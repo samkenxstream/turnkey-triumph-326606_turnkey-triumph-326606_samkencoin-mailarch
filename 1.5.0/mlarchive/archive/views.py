@@ -121,7 +121,7 @@ class CustomSearchView(SearchView):
             browse_list = None
         extra['browse_list'] = browse_list
         extra['query_string'] = query_string
-        
+
         # thread sort
         new_query = self.request.GET.copy()
         if 'gbt' in self.request.GET:
@@ -322,10 +322,15 @@ def detail(request, list_name, id, msg):
         previous_in_search, next_in_search = get_query_neighbors(
             query = cache.get(queryid),
             message = msg)
+        query_dict = request.GET.copy()
+        query_dict.pop('qid')
+        search_url = reverse('archive_search') + '?' + query_dict.urlencode()
+
     else:
         previous_in_search = None
         next_in_search = None
         queryid = None
+        search_url = None
 
     return render_to_response('archive/detail.html', {
         'msg':msg,
@@ -339,6 +344,7 @@ def detail(request, list_name, id, msg):
         'queryid':queryid,
         'replies':msg.replies.all(),
         'references':msg.get_references_messages()},
+        'search_url':search_url,
         RequestContext(request, {}),
     )
 
