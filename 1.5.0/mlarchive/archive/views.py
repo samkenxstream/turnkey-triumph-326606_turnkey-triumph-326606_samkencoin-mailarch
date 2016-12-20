@@ -120,7 +120,8 @@ class CustomSearchView(SearchView):
         else:
             browse_list = None
         extra['browse_list'] = browse_list
-
+        extra['query_string'] = query_string
+        
         # thread sort
         new_query = self.request.GET.copy()
         if 'gbt' in self.request.GET:

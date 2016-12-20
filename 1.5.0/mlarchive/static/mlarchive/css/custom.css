@@ -753,6 +753,10 @@ ul.navbar-nav a.disabled, ul.navbar-nav a.disabled:hover {
     display: none;
 }
 
+ul.navbar-nav li a span {
+    display: none;
+}
+
 @media (min-width: 768px)
 {
     #msg-aside ul {
@@ -766,12 +770,22 @@ ul.navbar-nav a.disabled, ul.navbar-nav a.disabled:hover {
 }
 
 @media (max-width: 767px) {
+    /*
     .navbar-msg-detail {
         display: none;
     }
+    */
 
     .btn-toolbar.msg-detail-toolbar {
         display: block;
+    }
+
+    ul.navbar-nav li a span {
+        display: inline;
+    }
+
+    ul.navbar-nav li a i {
+        display: none;
     }
 }
 /* ==========================================================================
