@@ -343,8 +343,8 @@ def detail(request, list_name, id, msg):
         'previous_in_search':previous_in_search,
         'queryid':queryid,
         'replies':msg.replies.all(),
-        'references':msg.get_references_messages()},
-        'search_url':search_url,
+        'references':msg.get_references_messages(),
+        'search_url':search_url},
         RequestContext(request, {}),
     )
 
