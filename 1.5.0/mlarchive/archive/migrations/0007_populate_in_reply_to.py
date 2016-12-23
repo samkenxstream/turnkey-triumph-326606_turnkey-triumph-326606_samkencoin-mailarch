@@ -27,7 +27,7 @@ def reverse_get_replies(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('archive', '0005_message_in_reply_to'),
+        ('archive', '0006_message_in_reply_to'),
     ]
 
     operations = [

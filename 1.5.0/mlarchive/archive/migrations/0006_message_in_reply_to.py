@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('archive', '0004_auto_20161201_1451'),
+        ('archive', '0005_rename_in_reply_to'),
     ]
 
     operations = [
