@@ -197,6 +197,12 @@ def initialize_formsets(query):
 
     return query_formset, not_formset
 
+def is_javascript_disabled(request):
+    if 'nojs' in request.GET:
+        return True
+    else:
+        return False
+
 def get_columns(user):
     """Returns email lists the user can view, grouped in columns for display.
     columns is a dictionary of lists containing keys: active, inactive, private
