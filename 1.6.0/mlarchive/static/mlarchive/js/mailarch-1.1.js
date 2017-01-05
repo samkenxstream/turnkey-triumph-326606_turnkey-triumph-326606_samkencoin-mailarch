@@ -14,8 +14,9 @@ var mailarch = {
     lastItem: 0,
     urlParams: {},
     sortDefault: new Array(),
-    defaultListPaneHeight: 229,
+    defaultListPaneHeight: 225,
     scrollMargin: $('.xtr').height(),
+    splitterHeight: $('#splitter-pane').height(),
     
     // PRIMARY FUNCTIONS =====================================
     
@@ -309,8 +310,8 @@ var mailarch = {
             containment: [0,200,0,$(document).height()-100],
             drag: function(event, ui){
                 var top = ui.position.top;
-                mailarch.$listPane.css("height",top-3);
-                mailarch.$viewPane.css("top",top+3);
+                mailarch.$listPane.css("height",top);
+                mailarch.$viewPane.css("top",top + mailarch.splitterHeight);
             },
             stop: function(event, ui){
                 var top = ui.position.top;
@@ -426,7 +427,7 @@ var mailarch = {
 
         // Use arrow as message detail link instead of subject text
         mailarch.$msgLinks.each(function(index) {
-            console.log( index + ": " + $( this ).text() );
+            // console.log( index + ": " + $( this ).text() );
             var text = $( this ).text();
             $( this ).html('<i class="fa fa-arrow-right" aria-hidden="true"></i>');
             $( this ).before(text);
@@ -498,8 +499,8 @@ var mailarch = {
     
     setSplitter: function(top) {
         // set page elements when splitter moves
-        mailarch.$listPane.css("height",top-3);
-        mailarch.$viewPane.css("top",top+3);
+        mailarch.$listPane.css("height",top);
+        mailarch.$viewPane.css("top",top + mailarch.splitterHeight);
         mailarch.$splitterPane.css("top",top);
     },
     

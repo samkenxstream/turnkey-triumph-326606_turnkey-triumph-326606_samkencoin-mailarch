@@ -524,12 +524,13 @@ table.msg-list-header-table th a.btn {
 }
 
 #splitter-pane {
+    background-color: lightgrey;
     position: absolute;
     left: 0;
     right: 0;
-    top: 200px;
+    top: 100px;
     cursor: row-resize;
-    height: 5px;
+    height: 8px;
 }
 
 #view-pane {
