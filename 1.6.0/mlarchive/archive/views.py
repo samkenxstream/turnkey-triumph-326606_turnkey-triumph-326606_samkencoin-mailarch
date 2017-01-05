@@ -110,6 +110,9 @@ class CustomSearchView(SearchView):
         extra = super(CustomSearchView, self).extra_context()
         query_string = '?' + self.request.META['QUERY_STRING']
 
+        # settings
+        extra['FILTER_CUTOFF'] = settings.FILTER_CUTOFF
+        
         # browse list
         match = re.search(r"^\?email_list=([a-zA-Z0-9\_\-]+)",query_string)
         if match:

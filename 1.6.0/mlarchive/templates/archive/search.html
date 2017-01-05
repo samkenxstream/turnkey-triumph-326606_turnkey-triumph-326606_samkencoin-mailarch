@@ -56,6 +56,13 @@
                     </div> <!-- from-filter -->
                 </div> <!-- filter-box -->
             </div> <!-- search-filters -->
+            
+            <div id="message">
+              {% if count > FILTER_CUTOFF %}
+                <p>Refine search to enable filters</p>
+              {% endif %}
+            </div>
+            
             <div id="footer">
                 <p class="small text-center">Email Archive v{{ version_num }}</p>
             </div>
