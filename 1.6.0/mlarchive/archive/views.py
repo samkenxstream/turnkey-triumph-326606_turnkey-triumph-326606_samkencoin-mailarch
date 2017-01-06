@@ -377,6 +377,14 @@ def export(request, type):
 
     return get_export(sqs, type, request)
 
+def legacy_message(request, list_name, id):
+    """Redirect to the appropriate message given list name and legacy number"""
+    try:
+        message = Message.objects.get(email_list__name=list_name,legacy_number=int(id))
+    except Message.DoesNotExist:
+        raise Http404("Message not found")
+    return HttpResponseRedirect(message.get_absolute_url())
+
 def logout_view(request):
     """Logout the user"""
     logout(request)

@@ -65,7 +65,6 @@ def test_detail_admin_access(client):
     user = UserFactory.create(is_staff=True)
     url = reverse('archive_detail', kwargs={'list_name':elist.name,'id':msg.hashcode})
     # not logged in
-    print url
     response = client.get(url)
     assert response.status_code == 200
     q = PyQuery(response.content)
@@ -78,6 +77,15 @@ def test_detail_admin_access(client):
     assert len(q('#admin-link')) == 1
 
 #def test_export(client):
+
+@pytest.mark.django_db(transaction=True)
+def test_legacy_message(client):
+    elist = EmailListFactory.create()
+    msg = MessageFactory.create(email_list=elist,legacy_number=1)
+    url = reverse('archive_legacy_message', kwargs={'list_name':elist.name,'id':'00001'})
+    response = client.get(url, follow=True)
+    assert response.status_code == 200
+    assert msg.get_absolute_url() in response.redirect_chain[0][0]
 
 @pytest.mark.django_db(transaction=True)
 def test_logout(client):
