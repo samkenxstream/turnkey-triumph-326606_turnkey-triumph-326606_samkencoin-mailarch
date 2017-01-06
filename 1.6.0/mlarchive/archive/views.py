@@ -112,7 +112,7 @@ class CustomSearchView(SearchView):
 
         # settings
         extra['FILTER_CUTOFF'] = settings.FILTER_CUTOFF
-        
+
         # browse list
         match = re.search(r"^\?email_list=([a-zA-Z0-9\_\-]+)",query_string)
         if match:
@@ -141,6 +141,7 @@ class CustomSearchView(SearchView):
         # export links
         extra['export_mbox'] = reverse('archive_export',kwargs={'type':'mbox'}) + query_string
         extra['export_maildir'] = reverse('archive_export',kwargs={'type':'maildir'})+ query_string
+        extra['export_url'] = reverse('archive_export',kwargs={'type':'url'})+ query_string
 
         # modify search link
         if 'as' in self.request.GET:
