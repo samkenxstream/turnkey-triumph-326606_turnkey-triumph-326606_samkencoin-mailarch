@@ -95,6 +95,13 @@ var mailarch = {
         mailarch.doSearch();
     },
     
+    checkMessageListScrollBar: function() {
+        // If listPane scroll bar is gone, see if there are more messages
+        if(!mailarch.$msgList.hasScrollBar()) {
+            alert("Scroll bar disappeared!")
+        }
+    },
+
     clearListFilter: function(event) {
         event.preventDefault();
         delete mailarch.urlParams.f_list;
@@ -316,6 +323,7 @@ var mailarch = {
             stop: function(event, ui){
                 var top = ui.position.top;
                 $.cookie("splitter",top);
+                mailarch.checkMessageListScrollBar();
             }
         });
         
@@ -524,6 +532,7 @@ $(function() {
     mailarch.init();
 });
 
+// Custom function to detect if vertical scroll bar is visible
 (function($) {
     $.fn.hasScrollBar = function() {
         return this.get(0).scrollHeight > this.height();
