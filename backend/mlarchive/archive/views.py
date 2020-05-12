@@ -386,6 +386,13 @@ class BaseStaticIndexView(View):
             url = reverse(self.view_name, kwargs={'list_name': self.kwargs['list_name'], 'date': '{}-{:02d}'.format(date.year, date.month)})
             return render(self.request, 'archive/refresh.html', {'url': url})
 
+    def get_date_for_url(self):
+        if self.month:
+            date = '{}-{:02d}'.format(self.year, self.month)
+        else:
+            date = date = '{}'.format(self.year)
+        return date
+
     def get_context_data(self):
         is_static_on = True if self.request.COOKIES.get('isStaticOn') == 'true' else False
         context = dict(static_mode_on=is_static_on,
@@ -394,6 +401,7 @@ class BaseStaticIndexView(View):
                        group_by_thread=self.group_by_thread,
                        time_period=TimePeriod(year=self.year, month=self.month),
                        date_string=self.get_date_string(),
+                       date_for_url=self.get_date_for_url(),
                        static_off_url=reverse('archive_browse_list', kwargs={'list_name': self.kwargs['list_name']}))
 
         add_nav_urls(context)
