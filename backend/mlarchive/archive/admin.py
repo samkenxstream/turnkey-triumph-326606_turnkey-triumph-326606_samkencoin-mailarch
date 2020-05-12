@@ -11,6 +11,8 @@ class MessageAdmin(admin.ModelAdmin):
 class EmailListAdmin(admin.ModelAdmin):
     ordering = ['name']
     search_fields = ['name']
+    list_display = ('name', 'private')
+    list_filter = ('name', 'private')
 
 
 admin.site.register(Message, MessageAdmin)
